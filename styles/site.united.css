@@ -1,4 +1,3 @@
-@import url(//fonts.googleapis.com/css?family=Ubuntu);
 /*!
  * Bootstrap v2.3.2
  *
@@ -206,7 +205,7 @@ textarea {
 }
 body {
   margin: 0;
-  font-family: 'Ubuntu', Tahoma, sans-serif;
+  font-family: Arial, sans-serif;
   font-size: 14px;
   line-height: 20px;
   color: #333333;
@@ -893,7 +892,7 @@ input,
 button,
 select,
 textarea {
-  font-family: 'Ubuntu', Tahoma, sans-serif;
+  font-family: Arial, sans-serif;
 }
 label {
   display: block;
@@ -3831,7 +3830,7 @@ input[type="submit"].btn.btn-mini {
 .navbar-search .search-query {
   margin-bottom: 0;
   padding: 4px 14px;
-  font-family: 'Ubuntu', Tahoma, sans-serif;
+  font-family: Arial, sans-serif;
   font-size: 13px;
   font-weight: normal;
   line-height: 1;
@@ -5445,7 +5444,7 @@ a.badge:focus {
 #toc .toc-active a:hover,
 #toc .toc-active a:active,
 #toc .toc-active a:visited {
-  background-color: #a5360f;
+  background-color: #dd4814;
   color: #ffffff;
 }
 .toc-shim {
@@ -5504,12 +5503,10 @@ code {
   margin-top: -56px;
 }
 .member-collapsed {
-  background-color: #772953;
-  color: #ffffff;
+  border: #dd4814 solid 1px;
 }
 .member-open {
-  background-color: inherit;
-  color: inherit;
+  color: #444;
 }
 .member {
   -webkit-transition: background-color 0.5s linear;
@@ -5540,4 +5537,12 @@ code {
   font-size: 12px;
   line-height: 15px;
   padding: 12px 4px !important;
+}
+article .toc-shim{
+	position: relative;
+	z-index: -1;
+}
+i[class*="icon-"] {
+  position: relative;
+  top: 2px;
 }

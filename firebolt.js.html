@@ -26,7 +26,7 @@ var prototype = 'prototype',
 	rgxClassOrId = /^.[\w-_]+$/,
 	rgxTag = /^[A-Za-z]+$/,
 	rgxNonWhitespace = /\S+/g,
-	rgxWhitespace = /\s+/;
+	rgxSpaceChars = /[ \n\r\t\f]+/; //From W3C http://www.w3.org/TR/html5/single-page.html#space-character
 
 
 //#region =========================== Globals ================================
@@ -54,7 +54,7 @@ window.$doc = document;
  * 
  * @global
  * @constant
- * @see https://developer.mozilla.org/en-US/docs/Web/API/Window
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Window|Window - Web API Interfaces | MDN}
  * @example window === $wnd  // true
  */
 window.$wnd = window;
@@ -66,7 +66,7 @@ window.$wnd = window;
  * @constant
  * @name $_GET
  * @type {Object.&lt;String, String>}
- * @see http://www.php.net/manual/en/reserved.variables.get.php
+ * @see {@link http://www.php.net/manual/en/reserved.variables.get.php|PHP: $_GET - Manual}
  */
 function processQueryString(e, href) {
 	var get = {},
@@ -168,17 +168,18 @@ window.$tag = function(tagName) {
 /**
  * The JavaScript Array object.
  * @class Array
- * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array|Array - JavaScript | MDN}
  */
 
 defineProperties(ArrayPrototype, {
 	/**
 	 * Removes all "empty" items (as defined by {@linkcode Firebolt.isEmpty}) from the array.
 	 * 
+	 * @brief Cleans array.
 	 * @function Array.prototype.clean
 	 * @param {Boolean} [allowEmptyStrings=false] - Set this to `true` to keep zero-length strings in the array.
 	 * @returns {Array} A reference to the array.
-	 * @see Firebolt#isEmpty
+	 * @see Firebolt.isEmpty
 	 */
 	clean: {
 		value: function(allowEmptyStrings) {
@@ -380,7 +381,7 @@ defineProperties(ArrayPrototype, {
 /**
  * The HTML DOM Document interface.
  * @namespace Document
- * @see https://developer.mozilla.org/en-US/docs/Web/API/document
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/document|Document - Web API Interfaces | MDN}
  */
 
 /**
@@ -407,7 +408,7 @@ document.ready = function(callback) {
 /**
  * The HTML DOM Element interface.
  * @class Element
- * @see https://developer.mozilla.org/en-US/docs/Web/API/element
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/element|Element - Web API Interfaces | MDN}
  */
 
 /**
@@ -652,7 +653,7 @@ ElementPrototype.removeAttr = function(attribute) {
 ElementPrototype.removeClass = function(className) {
 	if (_isChrome || _isOldIE) {
 		var changed = false,
-			classes = this.className.split(rgxWhitespace),
+			classes = this.className.split(rgxSpaceChars),
 			newClassName = '',
 			i = 0;
 		for (; i &lt; classes.length; i++) {
@@ -697,7 +698,7 @@ ElementPrototype.removeProp = function(property) {
 ElementPrototype.toggleClass = function(className) {
 	if (this.className) {
 		if (this.hasClass(className)) {
-			var classes = this.className.split(rgxWhitespace),
+			var classes = this.className.split(rgxSpaceChars),
 				newClassName = '',
 				i = 0;
 			for (; i &lt; classes.length; i++) {
@@ -839,17 +840,6 @@ Firebolt.delay = function(callback, ms) {
 };
 
 /**
- * HTML encodes the passed in string and returns the result.
- * 
- * @param {String} string - A string to be encoded.
- * @returns {String}
- * @memberOf Firebolt
- */
-Firebolt.HTMLEncode = function(str) {
-	return $('&lt;div/>').text(str).html();
-}
-
-/**
  * HTML decodes the passed in string and returns the result.
  * 
  * @param {String} string - An HTML string to be decoded.
@@ -858,6 +848,17 @@ Firebolt.HTMLEncode = function(str) {
  */
 Firebolt.HTMLDecode = function(str) {
 	return $('&lt;div/>').html(str).text();
+}
+
+/**
+ * HTML encodes the passed in string and returns the result.
+ * 
+ * @param {String} string - A string to be encoded.
+ * @returns {String}
+ * @memberOf Firebolt
+ */
+Firebolt.HTMLEncode = function(str) {
+	return $('&lt;div/>').text(str).html();
 }
 
 /**
@@ -932,7 +933,7 @@ Firebolt.toDeadNodeList = function(elements) {
 /**
  * The JavaScript Function interface.
  * @class Function
- * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function|Function - JavaScript | MDN}
  */
 
 /**
@@ -960,7 +961,7 @@ Function[prototype].delay = function(ms) {
 /**
  * The HTML DOM HTMLElement interface.
  * @class HTMLElement
- * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement|HTMLElement - Web API Interfaces | MDN}
  */
 
 /**
@@ -1113,7 +1114,7 @@ HTMLElementPrototype.show = function(style) {
 /**
  * The HTML DOM Node interface.
  * @class Node
- * @see https://developer.mozilla.org/en-US/docs/Web/API/Node
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Node|Node - Web API Interfaces | MDN}
  */
 
 /**
@@ -1204,7 +1205,7 @@ NodePrototype.text = function(text) {
  * Furthermore, NodeLists cannot have their elements removed or have elements added them. To do these types of
  * things, you must first convert the NodeList to an Array (see {@linkcode NodeList#toArray|NodeList.toArray()});
  * @class NodeList
- * @see https://developer.mozilla.org/en-US/docs/Web/API/NodeList
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/NodeList|NodeList - Web API Interfaces | MDN}
  */
 
 /* Give NodeLists the same prototype functions as Arrays */
@@ -1592,7 +1593,7 @@ NodeListPrototype.toggleClass = callOnEachElement('toggleClass');
  * Has all the same functions as {@link NodeList}.
  * @class HTMLCollection
  * @see NodeList
- * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLCollection
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLCollection|HTMLCollection - Web API Interfaces | MDN}
  */
 
 /* Give HTMLCollections the same prototype functions as NodeLists (if they don't already have them) */
@@ -1610,7 +1611,7 @@ Object.getOwnPropertyNames(NodeListPrototype).forEach(function(methodName) {
 /**
  * The JavaScript Number object.
  * @class Number
- * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number|Number - JavaScript | MDN}
  */
 
 /**
@@ -1643,7 +1644,7 @@ Number[prototype].toPaddedString = function(length, radix) {
 /**
  * The JavaScript String object.
  * @class String
- * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String
+ * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String|String - JavaScript | MDN}
  */
 
 if (!StringPrototype.contains) {
@@ -1816,7 +1817,7 @@ function Timer(callback, interval, onstart, onstop) {
 }
 
 //#endregion Timer
-</pre> </article> </section> </div> <div class="clearfix"></div> <footer> <span class="copyright"> Copyright © 2014 Nathan Woltman </span> <br/> <span class="jsdoc-message"> Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sun Apr 06 2014 07:15:13 GMT-0400 (EDT) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>. </span> </footer> </div> <br clear="both"> </div> </div> <script src="scripts/sunlight.js"></script> <script src="scripts/sunlight.javascript.js"></script> <script src="scripts/sunlight-plugin.doclinks.js"></script> <script src="scripts/sunlight-plugin.linenumbers.js"></script> <script src="scripts/sunlight-plugin.menu.js"></script> <script src="scripts/jquery.min.js"></script> <script src="scripts/jquery.scrollTo.js"></script> <script src="scripts/jquery.localScroll.js"></script> <script src="scripts/bootstrap-dropdown.js"></script> <script src="scripts/toc.js"></script> <script>  Sunlight.highlightAll({lineNumbers: true,  showMenu: true, enableDoclinks: true}); </script> <script>
+</pre> </article> </section> </div> <div class="clearfix"></div> <footer> <span class="copyright"> Copyright © 2014 Nathan Woltman </span> <br/> <span class="jsdoc-message"> Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sun Apr 06 2014 18:38:07 GMT-0400 (EDT) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>. </span> </footer> </div> <br clear="both"> </div> </div> <script src="scripts/sunlight.js"></script> <script src="scripts/sunlight.javascript.js"></script> <script src="scripts/sunlight-plugin.doclinks.js"></script> <script src="scripts/sunlight-plugin.linenumbers.js"></script> <script src="scripts/sunlight-plugin.menu.js"></script> <script src="scripts/jquery.min.js"></script> <script src="scripts/jquery.scrollTo.js"></script> <script src="scripts/jquery.localScroll.js"></script> <script src="scripts/bootstrap-dropdown.js"></script> <script src="scripts/toc.js"></script> <script>  Sunlight.highlightAll({lineNumbers: true,  showMenu: true, enableDoclinks: true}); </script> <script>
 		$( function () {
 			$( "#toc" ).toc( {
 			    anchorName  : function(i, heading, prefix) {
@@ -1828,6 +1829,73 @@ function Timer(callback, interval, onstart, onstop) {
 			} );
 			$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
 			$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+			
+			$( "#toc>ul a" ).click(function() {
+				var $this = $(this),
+					href = $this.attr('href'),
+					el = $('.name'+href);
+				if (el.hasClass('member-collapsed')) {
+					el.click();
+				}
+			});
+		} );
+	</script> <script>
+		$( function () {
+			var defs = $( "dt h4.name" ),
+				numDefs = defs.length;
+			defs.each(function() {
+				var $this = $(this);
+				var icon = $("<i/>").addClass("pull-right");
+				var dt = $this.parents("dt");
+				var children = dt.next("dd");
 
+				$this.append(icon).css( {cursor : "pointer"} );
+				$this.addClass("member");
+				
+				if (numDefs > 3 && !(location.hash && this.id === location.hash.slice(1))) {
+					icon.addClass("icon-plus-sign");
+					$this.addClass("member-collapsed");
+					children.hide();
+				}
+				else {
+					icon.addClass("icon-minus-sign");
+					$this.addClass("member-open");
+				}
+			} ).on('click', function () {
+				var $this = $(this),
+					children = $this.parents("dt").next("dd");
+					$this.children('i').toggleClass("icon-plus-sign icon-minus-sign");
+				if ($this.hasClass('member-collapsed')) {
+					children.slideDown();
+				}
+				else {
+					children.slideUp();
+				}
+				$this.toggleClass("member-open member-collapsed");
+			} );
+			
+			if (location.hash) {
+				$('[href="' + location.hash + '"]').click();
+			}
+			if ($('member-collapsed').length) {
+				$('.search-query').after('<button class="btn btn-link" onclick="$(\'member-collapsed\').click()">Expand All</button>');
+			}
+			
+			//Fix all <a> tags with the '$' in the href
+			$('#toc a[href^="#$"]').each(function(i, el) {
+				el.href = el.href.slice(el.href.indexOf('#')).replace('$', '_');
+			});
+			$('.dropdown a[href*="#$"]').each(function(i, el) {
+				el.href = el.href.slice(el.href.lastIndexOf('/') + 1).replace('$', '_');
+			});
+			//Fix all tags with the '$' in the href
+			$('[id^="$"]').each(function(i, el) {
+				el.id = el.id.replace('$', '_');
+			});
+			
+			//For all <a> tags that are not on this domain, set the target to '_blank'
+			$('a[href^="http"]').each(function() {
+				this.target = '_blank';
+			});
 		} );
 	</script> </body> </html>

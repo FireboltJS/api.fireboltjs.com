@@ -14,7 +14,7 @@ $.fn.toc = function(options) {
       var elScrollTo = $(e.target).attr('href');
       var $el = $(elScrollTo);
 
-      $('body,html').animate({ scrollTop: $el.offset().top }, 400, 'swing', function() {
+      $('body,html').animate({ scrollTop: $el.offset().top - 52 }, 400, 'swing', function() {
         location.hash = elScrollTo;
       });
     }
@@ -30,15 +30,16 @@ $.fn.toc = function(options) {
     }
     timeout = setTimeout(function() {
       var top = $(window).scrollTop(),
-        highlighted;
-      for (var i = 0, c = headingOffsets.length; i < c; i++) {
-        if (headingOffsets[i] >= top) {
-          $('li', self).removeClass(activeClassName);
-          highlighted = $('li:eq('+(i-1)+')', self).addClass(activeClassName);
-          opts.onHighlight(highlighted);
-          break;
-        }
-      }
+		  highlighted;
+		  //Select the right element in the TOC based on the current scrolling
+		  headings.each(function(i, heading) {
+		  	if (($(heading).offset().top - opts.highlightOffset) >= top) {
+		  		$('li', self).removeClass(activeClassName);
+		  		highlighted = $('li:eq('+(i-1)+')', self).addClass(activeClassName);
+		  		opts.onHighlight(highlighted);
+		  		return false;
+		  	}
+		  });
     }, 50);
   };
   if (opts.highlightOnScroll) {
@@ -139,7 +140,7 @@ $.fn.toc = function(options) {
     el.css({'top': '80px'});
 
     //create the tree
-    createTree(ul)
+	  createTree(ul);
     //set intent timer
     var intentTimer;
     var accumulatedTime = 0;

@@ -3702,7 +3702,7 @@ input[type="submit"].btn.btn-mini {
   *z-index: 2;
 }
 .navbar-inner {
-  min-height: 43px;
+  min-height: 42px;
   padding-left: 20px;
   padding-right: 20px;
   background-color: #fefefe;
@@ -3896,7 +3896,7 @@ input[type="submit"].btn.btn-mini {
   left: 0;
   display: block;
   float: left;
-  margin: 0 10px 0 0;
+  margin: -2px 10px 0 0;
 }
 .navbar .nav.pull-right {
   float: right;
@@ -5554,9 +5554,9 @@ legend {
   margin-left: 1px;
   margin-right: 1px;
 }
-i[class^="icon-"] {
-  opacity: 0.5;
-  vertical-align: -2px;
+i[class*="icon-"] {
+  position: relative;
+  top: 2px;
 }
 .well {
   -webkit-box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2) ,  -1px -1px 0 rgba(0, 0, 0, 0.1);
@@ -5708,12 +5708,10 @@ code {
   margin-top: -56px;
 }
 .member-collapsed {
-  background-color: #d9230f;
-  color: #ffffff;
+  border: #d9230f solid 1px;
 }
 .member-open {
-  background-color: inherit;
-  color: inherit;
+  color: #444;
 }
 .member {
   -webkit-transition: background-color 0.5s linear;
@@ -5744,4 +5742,8 @@ code {
   font-size: 12px;
   line-height: 15px;
   padding: 12px 4px !important;
+}
+article .toc-shim{
+	position: relative;
+	z-index: -1;
 }
