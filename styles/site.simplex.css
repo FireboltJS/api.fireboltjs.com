@@ -5709,22 +5709,17 @@ code {
 }
 .member-collapsed {
   border: #d9230f solid 1px;
+  border-radius: 5px;
 }
 .member-open {
+  border-top: #d9230f solid 1px;
   color: #444;
 }
 .member {
   -webkit-transition: background-color 0.5s linear;
-  -moz-transition: background-color 0.5s linear;
-  -o-transition: background-color 0.5s linear;
   transition: background-color 0.5s linear;
   -webkit-transition: color 0.5s linear;
-  -moz-transition: color 0.5s linear;
-  -o-transition: color 0.5s linear;
   transition: color 0.5s linear;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
   padding: 10px;
 }
 .sunlight-highlighted {
@@ -5742,6 +5737,9 @@ code {
   font-size: 12px;
   line-height: 15px;
   padding: 12px 4px !important;
+}
+.sunlight-container {
+	margin: -15px 0 25px !important;
 }
 article .toc-shim{
 	position: relative;
