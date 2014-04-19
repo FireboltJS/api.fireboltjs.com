@@ -1,10 +1,14 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="utf-8"> <title>Firebolt Source: firebolt.js</title> <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]--> <link type="text/css" rel="stylesheet" href="styles/sunlight.default.css"> <link type="text/css" rel="stylesheet" href="styles/site.simplex.css"> </head> <body> <div class="container-fluid"> <div class="navbar navbar-fixed-top "> <div class="navbar-inner"> <a class="brand" href="index.html">Firebolt</a> <ul class="nav"> <li class="dropdown"> <a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="Document.html">Document</a> </li> <li> <a href="Firebolt.html">Firebolt</a> </li> </ul> </li> <li class="dropdown"> <a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="Array.html">Array</a> </li> <li> <a href="Element.html">Element</a> </li> <li> <a href="Function.html">Function</a> </li> <li> <a href="HTMLCollection.html">HTMLCollection</a> </li> <li> <a href="HTMLElement.html">HTMLElement</a> </li> <li> <a href="Node.html">Node</a> </li> <li> <a href="NodeList.html">NodeList</a> </li> <li> <a href="Number.html">Number</a> </li> <li> <a href="String.html">String</a> </li> <li> <a href="Timer.html">Timer</a> </li> </ul> </li> <li class="dropdown"> <a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="global.html#$1">$1</a> </li> <li> <a href="global.html#$_GET">$_GET</a> </li> <li> <a href="global.html#$class">$class</a> </li> <li> <a href="global.html#$doc">$doc</a> </li> <li> <a href="global.html#$id">$id</a> </li> <li> <a href="global.html#$name">$name</a> </li> <li> <a href="global.html#$tag">$tag</a> </li> <li> <a href="global.html#$wnd">$wnd</a> </li> </ul> </li> </ul> </div> </div> <div class="row-fluid"> <div class="span12"> <div id="main"> <h1 class="page-title">Source: firebolt.js</h1> <section> <article> <pre class="sunlight-highlight-javascript linenums">﻿/*
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="utf-8"> <title>Firebolt Source: firebolt.js</title> <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]--> <link type="text/css" rel="stylesheet" href="styles/sunlight.default.css"> <link type="text/css" rel="stylesheet" href="styles/site.simplex.css"> </head> <body> <div class="container-fluid"> <div class="navbar navbar-fixed-top "> <div class="navbar-inner"> <a class="brand" href="index.html">Firebolt</a> <ul class="nav"> <li class="dropdown"> <a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="Document.html">Document</a> </li> <li> <a href="Firebolt.html">Firebolt</a> </li> </ul> </li> <li class="dropdown"> <a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="Array.html">Array</a> </li> <li> <a href="Element.html">Element</a> </li> <li> <a href="Function.html">Function</a> </li> <li> <a href="HTMLCollection.html">HTMLCollection</a> </li> <li> <a href="HTMLElement.html">HTMLElement</a> </li> <li> <a href="Node.html">Node</a> </li> <li> <a href="NodeList.html">NodeList</a> </li> <li> <a href="Number.html">Number</a> </li> <li> <a href="String.html">String</a> </li> <li> <a href="Timer.html">Timer</a> </li> </ul> </li> <li class="dropdown"> <a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="global.html#$1">$1</a> </li> <li> <a href="global.html#$_GET">$_GET</a> </li> <li> <a href="global.html#$class">$class</a> </li> <li> <a href="global.html#$doc">$doc</a> </li> <li> <a href="global.html#$id">$id</a> </li> <li> <a href="global.html#$name">$name</a> </li> <li> <a href="global.html#$tag">$tag</a> </li> <li> <a href="global.html#$wnd">$wnd</a> </li> </ul> </li> </ul> </div> </div> <div class="row-fluid"> <div class="span12"> <div id="main"> <h1 class="page-title">Source: firebolt.js</h1> <section> <article> <pre class="sunlight-highlight-javascript linenums">﻿/**
  * Firebolt current core file.
+ * @version 0.2.5
  * @author Nathan Woltman
- * @copyright 2014 Nathan Woltman, MIT https://github.com/FireboltJS/Firebolt/blob/master/LICENSE.txt
+ * @copyright 2014 Nathan Woltman
+ * @license MIT https://github.com/FireboltJS/Firebolt/blob/master/LICENSE.txt
  */
 
 (function(window, document) {
+
+//#region =========================== Private ================================
 
 /*
  * Local variables that are compressed when this file is minified.
@@ -27,6 +31,16 @@ var prototype = 'prototype',
 	rgxTag = /^[A-Za-z]+$/,
 	rgxNonWhitespace = /\S+/g,
 	rgxSpaceChars = /[ \n\r\t\f]+/; //From W3C http://www.w3.org/TR/html5/single-page.html#space-character
+
+function typeofString(value) {
+	return typeof value == 'string';
+}
+
+function isUndefined(value) {
+	return value === undefined;
+}
+
+//#endregion Private
 
 
 //#region =========================== Globals ================================
@@ -101,14 +115,29 @@ window.addEventListener('popstate', processQueryString);
 
 
 /**
- * Returns the first element within the document that matches the specified CSS selector.&lt;br />
- * Alias of `document.querySelector()`.
+ * Returns the first element within the document that matches the specified CSS selector.
+ * If no element matches the selector, `null` or `undefined` may be returned.&lt;br />
+ * Alias of `document.querySelector()`, but with optimizations if a single class name, id, or tag name is input as the selector.
  * 
  * @global
  * @param {String} selector
  * @returns {?Element}
  */
 window.$1 = function(selector) {
+	if (selector[0] === '.') { //Check for a single class name
+		if (rgxClassOrId.test(selector)) {
+			return document.getElementsByClassName(selector.slice(1))[0];
+		}
+	}
+	else if (selector[0] === '#') { //Check for a single id
+		if (rgxClassOrId.test(selector)) {
+			return document.getElementById(selector.slice(1));
+		}
+	}
+	else if (rgxTag.test(selector)) { //Check for a single tag name
+		return document.getElementsByTagName(selector)[0];
+	}
+	//else
 	return document.querySelector(selector);
 }
 
@@ -160,7 +189,7 @@ window.$tag = function(tagName) {
 	return document.getElementsByTagName(tagName);
 }
 
-//#endregion Global Selectors
+//#endregion Globals
 
 
 //#region ============================ Array =================================
@@ -182,8 +211,8 @@ defineProperties(ArrayPrototype, {
 	 */
 	clean: {
 		value: function(allowEmptyStrings) {
-			for (var i = 0; i &lt; this.length; i++) {
-				while (i &lt; this.length &amp;&amp; Firebolt.isEmpty(this[i], allowEmptyStrings)) {
+			for (var len = this.length, i = 0; i &lt; len; i++) {
+				while (i &lt; len &amp;&amp; Firebolt.isEmpty(this[i], allowEmptyStrings)) {
 					this.splice(i, 1);
 				}
 			}
@@ -210,11 +239,12 @@ defineProperties(ArrayPrototype, {
 	 */
 	clone: {
 		value: function() {
-			for (var len = this.length, arr = new Array(len),
-					 i = 0; i &lt; len; i++) {
-				arr[i] = this[i];
+			for (var len = this.length, clone = new Array(len),
+				 i = 0; i &lt; len; i++)
+			{
+				clone[i] = this[i];
 			}
-			return arr;
+			return clone;
 		}
 	},
 
@@ -226,7 +256,7 @@ defineProperties(ArrayPrototype, {
 	 */
 	contains: {
 		value: function(e) {
-			return this.indexOf(e) != -1;
+			return this.indexOf(e) >= 0;
 		}
 	},
 
@@ -243,7 +273,7 @@ defineProperties(ArrayPrototype, {
 			if (this === array) { //Easy check
 				return true;
 			}
-			if (this.length != array.length) {
+			if (this.length !== array.length) {
 				return false;
 			}
 			for (var i = 0; i &lt; array.length; i++) {
@@ -279,7 +309,7 @@ defineProperties(ArrayPrototype, {
 	 * Returns the last item of the array.
 	 * 
 	 * @function Array.prototype.last
-	 * @returns {*} The last item in the array, or undefined if the array is empty.
+	 * @returns {*} The last item in the array, or `undefined` if the array is empty.
 	 */
 	last: {
 		value: function() {
@@ -296,9 +326,12 @@ defineProperties(ArrayPrototype, {
 	 */
 	remove: {
 		value: function() {
-			for (var i = 0, rindex; i &lt; arguments.length; i++) {
+			for (var rindex, i = 0; i &lt; arguments.length; i++) {
 				while ((rindex = this.indexOf(arguments[i])) >= 0) {
 					this.splice(rindex, 1);
+					if (!this.length) {
+						return this; //Exit early since there is nothing left to remove
+					}
 				}
 			}
 			return this;
@@ -306,7 +339,7 @@ defineProperties(ArrayPrototype, {
 	},
 
 	/**
-	 * Returns an array containing every item that is only in one of this array or the input array.
+	 * Returns an array containing every distinct item that is in either this array or the input array.
 	 * 
 	 * @function Array.prototype.union
 	 * @param {Array|Enumerable} array - Array or other enumerable object that has a `length` property.
@@ -351,7 +384,7 @@ defineProperties(ArrayPrototype, {
 	 * @param {...*} items - One or more items to leave out of the returned array.
 	 * @returns {Array}
 	 * @example
-	 * [1, 2, 3, 4, 5, 6].without(3, 4, 6); // returns [1, 2, 5]
+	 * [1, 2, 3, 4, 5, 6].without(3, 4, 6);  // returns [1, 2, 5]
 	 */
 	without: {
 		value: function() {
@@ -372,7 +405,7 @@ defineProperties(ArrayPrototype, {
 	}
 });
 
-// #endregion Array
+//#endregion Array
 
 
 //#region =========================== Document ===============================
@@ -399,7 +432,7 @@ document.ready = function(callback) {
 	}
 };
 
-// #endregion Document
+//#endregion Document
 
 
 //#region =========================== Element ================================
@@ -418,9 +451,7 @@ document.ready = function(callback) {
  * @param {String} selector
  * @returns {NodeList} A list of selected elements.
  */
-ElementPrototype.$ = function(selector) {
-	return this.querySelectorAll(selector);
-};
+ElementPrototype.$ = ElementPrototype.querySelectorAll;
 
 /**
  * Returns the first element within the element that matches the specified CSS selector.&lt;br />
@@ -430,9 +461,7 @@ ElementPrototype.$ = function(selector) {
  * @param {String} selector
  * @returns {?Element}
  */
-ElementPrototype.$1 = function(selector) {
-	return this.querySelector(selector);
-};
+ElementPrototype.$1 = ElementPrototype.querySelector;
 
 /**
  * Returns a list of the elements within the element with the specified class name.&lt;br />
@@ -442,9 +471,7 @@ ElementPrototype.$1 = function(selector) {
  * @param {String} className
  * @returns {HTMLCollection|NodeList} A collection of elements with the specified class name.
  */
-ElementPrototype.$class = function(className) {
-	return this.getElementsByClassName(className);
-};
+ElementPrototype.$class = ElementPrototype.getElementsByClassName;
 
 /**
  * Returns a list of the elements within the element with the specified tag name.&lt;br />
@@ -454,123 +481,7 @@ ElementPrototype.$class = function(className) {
  * @param {String} tagName
  * @returns {HTMLCollection|NodeList} A collection of elements with the specified tag name.
  */
-ElementPrototype.$tag = function(tagName) {
-	return this.getElementsByTagName(tagName);
-};
-
-/**
- * Adds the specified class to the element if the element doesn't already have it.
- * 
- * @function Element.prototype.addClass
- * @param {String} className - The class to be added to the element.
- */
-ElementPrototype.addClass = function(className) {
-	if (!this.className) {
-		this.className = className;
-	}
-	else if (!_isOldIE) {
-		this.classList.add(className);
-	}
-	else if (!this.hasClass(className)) {
-		this.className += ' ' + className;
-	}
-
-	return this;
-};
-
-/**
- * Gets the value of the element's specified attribute.
- * 
- * @function Element.prototype.attr
- * @param {String|Object} attribute - The name of the attribute who's value you want to get.
- * @returns {String} The value of the attribute being retrieved.
- */
-/**
- * Sets the element's specified attribute.
- * 
- * @function Element.prototype.attr
- * @param {String} attribute - The name of the attribute who's value should be set.
- * @param {String} value - The value to set the specified attribute to.
- */
-/**
- * Sets the specified attributes of the element.
- * 
- * @function Element.prototype.attr
- * @param {Object.&lt;String, String>} attributes - The name of the attribute who's value should be set or an object of attribute-value pairs to set.
- */
-ElementPrototype.attr = function(attr, value) {
-	if (typeof value == 'undefined') {
-		if (typeof attr == 'string') {
-			return this.getAttribute(attr);
-		}
-		for (var attribute in attr) {
-			this.setAttribute(attribute, attr[attribute]);
-		}
-	}
-	else {
-		this.setAttribute(attr, value);
-	}
-
-	return this;
-};
-
-/**
- * Removes all of the element's child nodes.
- * 
- * @function Element.prototype.empty
- * @chainable
- * @example
- * // HTML (before)
- * &lt;div id="mydiv">
- *     &lt;span>Inside Span&lt;/span>
- *     Some Text
- * &lt;/div>
- *
- * // JavaScript
- * $id('mydiv').empty
- *
- * // HTML (after)
- * &lt;div id="mydiv">&lt;/div>
- */
-ElementPrototype.empty = function() {
-	while (this.childNodes.length) {
-		this.removeChild(this.childNodes[0]);
-	}
-	return this;
-};
-
-/**
- * Determines if the element's class list has the specified class name.
- * 
- * @function Element.prototype.hasClass
- * @param {String} className - A string containing a single class name.
- * @returns {Boolean} `true` if the class name is in the element's class list; else `false`.
- */
-ElementPrototype.hasClass = function(className) {
-	if (!_isOldIE) return this.classList.contains(className);
-	return new RegExp('(?:\\s|^)' + className + '(?:\\s|$)').test(this.className);
-};
-
-/**
- * Gets the element's inner HTML.
- * 
- * @function Element.prototype.html
- * @returns {String} The element's inner HTML.
- */
-/**
- * Set the element's inner HTML.
- * 
- * @function Element.prototype.html
- * @param {String} innerHTML - A string of HTML to set as the content of the element.
- */
-ElementPrototype.html = function(innerHTML) {
-	if (typeof innerHTML == 'undefined') {
-		return this.innerHTML; //Get
-	}
-	this.innerHTML = innerHTML; //Set
-
-	return this;
-};
+ElementPrototype.$tag = ElementPrototype.getElementsByTagName;
 
 /**
  * Determines if the element matches the specified CSS selector.
@@ -579,147 +490,9 @@ ElementPrototype.html = function(innerHTML) {
  * @param {String} selector - A CSS selector string.
  * @returns {Boolean} `true` if the element matches the selector; else `false`.
  */
-ElementPrototype.matches = ElementPrototype.matches || ElementPrototype.webkitMatchesSelector || ElementPrototype.mozMatchesSelector || ElementPrototype.msMatchesSelector;
+ElementPrototype.matches = ElementPrototype.matches || ElementPrototype.webkitMatchesSelector || ElementPrototype.mozMatchesSelector || ElementPrototype.msMatchesSelector || ElementPrototype.oMatchesSelector;
 
-/**
- * Gets or set the element's inner HTML.
- * 
- * @function Element.prototype.prepend
- * @param {...(String|Node|Array.&lt;Node>)} content - One or more DOM elements, arrays of elements, or HTML strings to insert at the beginning of this element.
- */
-ElementPrototype.prepend = function() {
-	for (var items = arguments, i = 0; i &lt; items.length; i++) {
-		
-	}
-
-	return this;
-};
-
-/**
- * Gets the value of the element's specified property.
- * 
- * @function Element.prototype.prop
- * @param {String} property - The name of the property who's value you want to get.
- * @returns {?} The value of the property being retrieved.
- */
-/**
- * Sets the specified property of the element.
- * 
- * @function Element.prototype.prop
- * @param {String} property - The name of the property to be set.
- * @param {*} value - The value to set the property to.
- */
-/**
- * Sets the specified properties of the element.
- * 
- * @function Element.prototype.prop
- * @param {Object.&lt;String, *>} properties - An object of property-value pairs to set.
- */
-ElementPrototype.prop = function(prop, value) {
-	if (typeof value == 'undefined') {
-		if (typeof prop == 'string') {
-			return this[prop]; //Get
-		}
-		for (var property in prop) {
-			this[property] = prop[property]; //Set multiple
-		}
-	}
-	else {
-		this[prop] = value; //Set single
-	}
-
-	return this;
-};
-
-/**
- * Removes the specified attribute from the element.
- * 
- * @function Element.prototype.removeAttr
- * @param {String} attribute - The name of the attribute to remove.
- */
-ElementPrototype.removeAttr = function(attribute) {
-	this.removeAttribute(attribute);
-
-	return this;
-};
-
-/**
- * Removes the input class from the element if the element currently has it.
- * 
- * @function Element.prototype.removeClass
- * @param {String} className - The class to be removed from the element.
- */
-ElementPrototype.removeClass = function(className) {
-	if (_isChrome || _isOldIE) {
-		var changed = false,
-			classes = this.className.split(rgxSpaceChars),
-			newClassName = '',
-			i = 0;
-		for (; i &lt; classes.length; i++) {
-			if (!classes[i]) continue;
-			if (classes[i] != className) {
-				if (newClassName) newClassName += ' ';
-				newClassName += classes[i];
-			}
-			else {
-				changed = true;
-			}
-		}
-		if (changed) {
-			this.className = newClassName;
-		}
-	}
-	else {
-		this.classList.remove(className);
-	}
-
-	return this;
-};
-
-/**
- * Removes the specified property from the element.
- * 
- * @function Element.prototype.removeProp
- * @param {String} property - The name of the property to remove.
- */
-ElementPrototype.removeProp = function(property) {
-	this[property] = null;
-
-	return this;
-};
-
-/**
- * Toggles the specified class for the element.
- * 
- * @function Element.prototype.toggleClass
- * @param {String} className - The class to be toggled.
- */
-ElementPrototype.toggleClass = function(className) {
-	if (this.className) {
-		if (this.hasClass(className)) {
-			var classes = this.className.split(rgxSpaceChars),
-				newClassName = '',
-				i = 0;
-			for (; i &lt; classes.length; i++) {
-				if (classes[i] &amp;&amp; classes[i] != className) {
-					if (newClassName) newClassName += ' ';
-					newClassName += classes[i];
-				}
-			}
-			this.className = newClassName;
-		}
-		else {
-			this.className += ' ' + className;
-		}
-	}
-	else {
-		this.className = className;
-	}
-
-	return this;
-};
-
-// #endregion Element
+//#endregion Element
 
 
 //#region =========================== Firebolt ===============================
@@ -763,7 +536,7 @@ ElementPrototype.toggleClass = function(className) {
  */
 function isHtml(str) {
 	var idxTag = str.indexOf('&lt;');
-	if (idxTag >= 0 &amp;&amp; (idxTag &lt; 4 || str.lastIndexOf('[', idxTag - 4) == -1)) {
+	if (idxTag >= 0 &amp;&amp; (idxTag &lt; 4 || str.lastIndexOf('[', idxTag - 4) &lt; 0)) {
 		return 1;
 	}
 	return 0;
@@ -772,13 +545,13 @@ function isHtml(str) {
 /**
  * Returns a list of the elements either found in the DOM that match the passed in CSS selector or created by passing an HTML string.&lt;br />
  * When passed a CSS selector string, acts as an alias of `document.querySelectorAll()`.&lt;br />
- * Also represents the Firebolt namespace object and can be referenced by the synonyms FB and $ (on pages without jQuery).&lt;br />
+ * Also represents the Firebolt namespace object and can be referenced by the synonyms `FB` and `$` (on pages where `$` has not already been defined).&lt;br />
  * &lt;br />
- * NOTE: When a selector is passed into this function that is of the form "#elid" (for selecting a single element by its id),
+ * NOTE: When a selector is passed into this function that is of the form `"#elid"` (for selecting a single element by its id),
  * only a single element is returned instead of a NodeList (or `null` if there are no elements with the id). 
  * 
  * @function
- * @param {String} str - A CSS selector string or an HTML string.
+ * @param {String} string - A CSS selector string or an HTML string.
  * @returns {NodeList} A non-live list of selected elements or newly created elements.
  * @memberOf Firebolt
  * @example
@@ -788,16 +561,20 @@ function isHtml(str) {
  * $.create('div')         // Calls Firebolt's `create()` method to create a new div element 
  */
 function Firebolt(str) {
-	if (str[0] == '.' &amp;&amp; rgxClassOrId.test(str)) {
-		return document.getElementsByClassName(str.slice(1));
+	if (str[0] === '.') { //Check for a single class name
+		if (rgxClassOrId.test(str)) {
+			return document.getElementsByClassName(str.slice(1));
+		}
 	}
-	if (str[0] == '#' &amp;&amp; rgxClassOrId.test(str)) {
-		return document.getElementById(str.slice(1));
+	else if (str[0] === '#') { //Check for a single id
+		if (rgxClassOrId.test(str)) {
+			return document.getElementById(str.slice(1));
+		}
 	}
-	if (rgxTag.test(str)) {
+	else if (rgxTag.test(str)) { //Check for a single tag name
 		return document.getElementsByTagName(str);
 	}
-	if (isHtml(str)) {
+	else if (isHtml(str)) { //Check if the string is an HTML string
 		return Firebolt.create('div').html(str).childNodes;
 	}
 	//else
@@ -839,25 +616,25 @@ Firebolt.delay = function(callback, ms) {
 };
 
 /**
- * HTML decodes the passed in string and returns the result.
+ * HTML-decodes the passed in string and returns the result.
  * 
- * @param {String} string - An HTML string to be decoded.
- * @returns {String}
+ * @param {String} string - The string to decode.
+ * @returns {String} The HTML-decoded text.
  * @memberOf Firebolt
  */
-Firebolt.HTMLDecode = function(str) {
-	return $('&lt;div/>').html(str).text();
+Firebolt.htmlDecode = function(str) {
+	return Firebolt.create('div').html(str).text();
 }
 
 /**
- * HTML encodes the passed in string and returns the result.
+ * HTML-encodes the passed in string and returns the result.
  * 
- * @param {String} string - A string to be encoded.
- * @returns {String}
+ * @param {String} string - The string to encode.
+ * @returns {String} The HTML-encoded text.
  * @memberOf Firebolt
  */
-Firebolt.HTMLEncode = function(str) {
-	return $('&lt;div/>').text(str).html();
+Firebolt.htmlEncode = function(str) {
+	return Firebolt.create('div').text(str).html();
 }
 
 /**
@@ -876,7 +653,7 @@ Firebolt.HTMLEncode = function(str) {
  * @memberOf Firebolt
  */
 Firebolt.isEmpty = function(value, allowEmptyString) {
-	return value == null || typeof value == 'string' &amp;&amp; !allowEmptyString &amp;&amp; !value || typeof value == 'object' &amp;&amp; Firebolt.isEmptyObject(value);
+	return value == null || typeofString(value) &amp;&amp; !allowEmptyString &amp;&amp; !value || typeof value == 'object' &amp;&amp; Firebolt.isEmptyObject(value);
 };
 
 /**
@@ -952,7 +729,7 @@ Function[prototype].delay = function(ms) {
 	};
 };
 
-// #endregion Function
+//#endregion Function
 
 
 //#region ========================== HTMLElement =============================
@@ -962,6 +739,80 @@ Function[prototype].delay = function(ms) {
  * @class HTMLElement
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement|HTMLElement - Web API Interfaces | MDN}
  */
+
+/**
+ * @summary Adds the specified class(es) to the element.
+ * 
+ * @description
+ * &lt;h5>Note:&lt;/h5> Unlike jQuery, the format of the space-separated classes required by Firebolt is strict. Each class must
+ * be separated by only a single space character and there cannot be whitespace at the beginning or end of the string.
+ * ```JavaScript
+ * element.addClass('one  two').removeClass('three ');  // Bad syntax
+ * element.addClass('one two').removeClass('three');    // Correct syntax
+ * ```
+ * 
+ * @function HTMLElement.prototype.addClass
+ * @param {String} className - One or more space-separated classes to be added to the element's class attribute.
+ * @returns this, chainable
+ */
+HTMLElementPrototype.addClass = function(value) {
+	if (!this.className) {
+		//There currently is no class name so the passed in value can easily be set as the class name
+		this.className = value;
+	}
+	else {
+		for (var newClasses = value.split(' '), newClassName = this.className,
+			 i = 0; i &lt; newClasses.length; i++)
+		{
+			if (!this.hasClass(newClasses[i])) {
+				newClassName += ' ' + newClasses[i];
+			}
+		}
+
+		//Only assign if the new class name is different (longer) to avoid unnecessary rendering
+		if (newClassName.length > this.className.length) {
+			this.className = newClassName;
+		}
+	}
+
+	return this;
+};
+
+/**
+ * Gets the value of the element's specified attribute.
+ * 
+ * @function HTMLElement.prototype.attr
+ * @param {String|Object} attribute - The name of the attribute who's value you want to get.
+ * @returns {String} The value of the attribute being retrieved.
+ */
+/**
+ * Sets the element's specified attribute.
+ * 
+ * @function HTMLElement.prototype.attr
+ * @param {String} attribute - The name of the attribute who's value should be set.
+ * @param {String} value - The value to set the specified attribute to.
+ */
+/**
+ * Sets the specified attributes of the element.
+ * 
+ * @function HTMLElement.prototype.attr
+ * @param {Object.&lt;String, String>} attributes - The name of the attribute who's value should be set or an object of attribute-value pairs to set.
+ */
+HTMLElementPrototype.attr = function(attr, value) {
+	if (isUndefined(value)) {
+		if (typeofString(attr)) {
+			return this.getAttribute(attr); //Get
+		}
+		for (var attribute in attr) {
+			this.setAttribute(attribute, attr[attribute]); //Set multiple
+		}
+	}
+	else {
+		this.setAttribute(attr, value); //Set single
+	}
+
+	return this;
+};
 
 /**
  * Gets the element's computed style object.
@@ -996,8 +847,8 @@ Function[prototype].delay = function(ms) {
  * @param {String} cssText - A CSS style string.
  */
 HTMLElementPrototype.css = function(prop, value) {
-	if (typeof prop == 'string') {
-		if (typeof value == 'undefined') {
+	if (typeofString(prop)) {
+		if (isUndefined(value)) {
 			if (!/:/.test(prop)) {
 				//Get the specified property
 				return getComputedStyle(this)[prop];
@@ -1024,6 +875,43 @@ HTMLElementPrototype.css = function(prop, value) {
 };
 
 /**
+ * Removes all of the element's child nodes.
+ * 
+ * @function HTMLElement.prototype.empty
+ * @chainable
+ * @example
+ * // HTML (before)
+ * &lt;div id="mydiv">
+ *     &lt;span>Inside Span&lt;/span>
+ *     Some Text
+ * &lt;/div>
+ *
+ * // JavaScript
+ * $id('mydiv').empty
+ *
+ * // HTML (after)
+ * &lt;div id="mydiv">&lt;/div>
+ */
+HTMLElementPrototype.empty = function() {
+	while (this.childNodes.length) {
+		this.removeChild(this.childNodes[0]);
+	}
+
+	return this;
+};
+
+/**
+ * Determines if the element's class list has the specified class name.
+ * 
+ * @function HTMLElement.prototype.hasClass
+ * @param {String} className - A string containing a single class name.
+ * @returns {Boolean} `true` if the class name is in the element's class list; else `false`.
+ */
+HTMLElementPrototype.hasClass = function(className) {
+	return this.classList.contains(className);
+};
+
+/**
  * Hides the element by setting its display style to 'none'.
  * 
  * @function HTMLElement.prototype.hide
@@ -1032,6 +920,27 @@ HTMLElementPrototype.hide = function() {
 	//if (getComputedStyle(this).display !== "none") {
 		this.style.display = 'none';
 	//}
+
+	return this;
+};
+
+/**
+ * Gets the element's inner HTML.
+ * 
+ * @function HTMLElement.prototype.html
+ * @returns {String} The element's inner HTML.
+ */
+/**
+ * Sets the element's inner HTML.
+ * 
+ * @function HTMLElement.prototype.html
+ * @param {String} innerHTML - An HTML string.
+ */
+HTMLElementPrototype.html = function(innerHTML) {
+	if (isUndefined(innerHTML)) {
+		return this.innerHTML; //Get
+	}
+	this.innerHTML = innerHTML; //Set
 
 	return this;
 };
@@ -1065,9 +974,110 @@ HTMLElementPrototype.offset = function() {
 };
 
 /**
+ * Prepends content to the inside of the element.
+ * 
+ * @function HTMLElement.prototype.prepend
+ * @param {...(String|Node|Array.&lt;Node>)} content - One or more DOM elements, arrays of elements, or HTML strings to insert at the beginning of this element.
+ */
+HTMLElementPrototype.prepend = function() {
+	for (var items = arguments, i = 0; i &lt; items.length; i++) {
+
+	}
+
+	return this;
+};
+
+/**
+ * Gets the value of the element's specified property.
+ * 
+ * @function HTMLElement.prototype.prop
+ * @param {String} property - The name of the property who's value you want to get.
+ * @returns {?} The value of the property being retrieved.
+ */
+/**
+ * Sets the specified property of the element.
+ * 
+ * @function HTMLElement.prototype.prop
+ * @param {String} property - The name of the property to be set.
+ * @param {*} value - The value to set the property to.
+ */
+/**
+ * Sets the specified properties of the element.
+ * 
+ * @function HTMLElement.prototype.prop
+ * @param {Object.&lt;String, *>} properties - An object of property-value pairs to set.
+ */
+HTMLElementPrototype.prop = function(prop, value) {
+	if (isUndefined(value)) {
+		if (typeofString(prop)) {
+			return this[prop]; //Get
+		}
+		for (var property in prop) {
+			this[property] = prop[property]; //Set multiple
+		}
+	}
+	else {
+		this[prop] = value; //Set single
+	}
+
+	return this;
+};
+
+/**
+ * Removes the specified attribute from the element.
+ * 
+ * @function HTMLElement.prototype.removeAttr
+ * @param {String} attribute - The name of the attribute to remove.
+ */
+HTMLElementPrototype.removeAttr = function(attribute) {
+	this.removeAttribute(attribute);
+
+	return this;
+};
+
+/**
+ * @summary Removes the specified class(es) or all classes from the element.
+ * 
+ * @description
+ * &lt;h5>Note:&lt;/h5> Unlike jQuery, the format of the space-separated classes required by Firebolt is strict. Each class must
+ * be separated by only a single space character and there cannot be whitespace at the beginning or end of the string.
+ * ```JavaScript
+ * element.addClass('one  two').removeClass('three ');  // Bad syntax
+ * element.addClass('one two').removeClass('three');    // Correct syntax
+ * ```
+ * 
+ * @function HTMLElement.prototype.removeClass
+ * @param {String} [className] - One or more space-separated classes to be removed from the element's class attribute.
+ * @returns this, chainable
+ */
+HTMLElementPrototype.removeClass = function(value) {
+	if (isUndefined(value)) {
+		this.className = ''; //Remove all classes
+	}
+	else {
+		var classList = this.classList;
+		classList.remove.apply(classList, value.split(' '));
+	}
+	
+	return this;
+};
+
+/**
+ * Removes the specified property from the element.
+ * 
+ * @function HTMLElement.prototype.removeProp
+ * @param {String} propertyName - The name of the property to remove.
+ */
+HTMLElementPrototype.removeProp = function(propertyName) {
+	delete this[propertyName];
+
+	return this;
+};
+
+/**
  * Shows an element by giving it a certain display style. If no parameter is passed in,
- * Firebolt determines the element's default display style and sets it to that (NOTE:
- * the element's default display style may be 'none' and hence the element would not be shown).
+ * Firebolt determines the element's default display style and sets it to that. &lt;br />
+ * NOTE: The element's default display style may be 'none', in which case the element would not be shown).
  * 
  * @function HTMLElement.prototype.show
  * @param {Number|String} [style] - The style of display the element should be shown with. Possibilities are:
@@ -1092,7 +1102,7 @@ HTMLElementPrototype.show = function(style) {
 				style = 'inline';
 		}
 	}
-	if (typeof style !== 'string') {
+	if (!typeofString(style)) {
 		//Create a temporary element of the same type as this element to figure out what the default display value should be
 		var temp = Firebolt.create(this.tagName, {
 			style: 'width:0;height:0;border:0;margin:0;padding:0'
@@ -1105,7 +1115,38 @@ HTMLElementPrototype.show = function(style) {
 	return this;
 };
 
-// #endregion HTMLElement
+/**
+ * Toggles the specified class for the element.
+ * 
+ * @function HTMLElement.prototype.toggleClass
+ * @param {String} className - The class to be toggled.
+ */
+HTMLElementPrototype.toggleClass = function(className) {
+	if (this.className) {
+		if (this.hasClass(className)) {
+			var classes = this.className.split(rgxSpaceChars),
+				newClassName = '',
+				i = 0;
+			for (; i &lt; classes.length; i++) {
+				if (classes[i] &amp;&amp; classes[i] != className) {
+					if (newClassName) newClassName += ' ';
+					newClassName += classes[i];
+				}
+			}
+			this.className = newClassName;
+		}
+		else {
+			this.className += ' ' + className;
+		}
+	}
+	else {
+		this.className = className;
+	}
+
+	return this;
+};
+
+//#endregion HTMLElement
 
 
 //#region ============================= Node =================================
@@ -1168,7 +1209,7 @@ NodePrototype.insertAfter = function(node) {
  * @function Node.prototype.remove
  */
 NodePrototype.remove = function() {
-	this.parentNode.removeChild(this);
+	return this.parentNode.removeChild(this);
 };
 
 /**
@@ -1184,7 +1225,7 @@ NodePrototype.remove = function() {
  * @param {String|*} text - The text or content that will be converted to a string to be set as the node's text content.
  */
 NodePrototype.text = function(text) {
-	if (typeof text == 'undefined') {
+	if (isUndefined(text)) {
 		return this.textContent;
 	}
 	//else
@@ -1193,7 +1234,7 @@ NodePrototype.text = function(text) {
 	return this;
 };
 
-// #endregion Node
+//#endregion Node
 
 
 //#region =========================== NodeList ===============================
@@ -1209,7 +1250,7 @@ NodePrototype.text = function(text) {
 
 /* Give NodeLists the same prototype functions as Arrays */
 Object.getOwnPropertyNames(ArrayPrototype).forEach(function(methodName) {
-	if (!NodeListPrototype[methodName]) {
+	if (methodName != 'length' &amp;&amp; !NodeListPrototype[methodName]) {
 		switch (methodName) {
 			case 'contains':
 			case 'equals':
@@ -1247,7 +1288,7 @@ Object.getOwnPropertyNames(ArrayPrototype).forEach(function(methodName) {
 function callOnEachElement(funcName) {
 	return function() {
 		for (var i = 0, len = this.length; i &lt; len; i++) {
-			if (this[i].nodeType == 1) this[i][funcName].apply(this[i], arguments);
+			if (this[i].nodeType === 1) this[i][funcName].apply(this[i], arguments);
 		}
 		return this;
 	};
@@ -1272,7 +1313,7 @@ function getFirstSetEachElement(funcName, numArgs) {
 			i = 0;
 		if (arguments.length &lt; numArgs &amp;&amp; typeof arguments[0] != 'object') {
 			for (; i &lt; len; i++) {
-				if (items[i].nodeType == 1) {
+				if (items[i].nodeType === 1) {
 					return items[i][funcName](arguments[0]); //Allowed to assume at most one argument needed
 				}
 			}
@@ -1280,7 +1321,7 @@ function getFirstSetEachElement(funcName, numArgs) {
 		}
 		//else
 		for (; i &lt; len; i++) {
-			if (items[i].nodeType == 1) {
+			if (items[i].nodeType === 1) {
 				items[i][funcName].apply(items[i], arguments);
 			}
 		}
@@ -1296,8 +1337,8 @@ function getFirstSetEachElement(funcName, numArgs) {
  * @returns {NodeList} The result of adding the new item(s) to the current list.
  */
 NodeListPrototype.add = function(e) {
-	if (typeof e == 'string') {
-		e = $(e);
+	if (typeofString(e)) {
+		e = Firebolt(e);
 	}
 	else if (!e.length) {
 		e = [e];
@@ -1393,9 +1434,9 @@ NodeListPrototype.empty = callOnEachElement('empty');
 NodeListPrototype.filter = function(selector) {
 	var filtration = [],
 		i = 0;
-	if (typeof selector == 'string') {
+	if (typeofString(selector)) {
 		for (; i &lt; this.length; i++) {
-			if (this[i].nodeType == 1 &amp;&amp; this[i].matches(selector)) {
+			if (this[i].nodeType === 1 &amp;&amp; this[i].matches(selector)) {
 				filtration.push(this[i]);
 			}
 		}
@@ -1427,10 +1468,10 @@ NodeListPrototype.hide = callOnEachElement('hide');
  * @returns {String} The element's inner HTML.
  */
 /**
- * Set the element's inner HTML.
+ * Sets the inner HTML of each element in the list.
  * 
- * @function Element.prototype.html
- * @param {String} innerHTML - A string of HTML to set as the content of the element.
+ * @function NodeList.prototype.html
+ * @param {String} innerHTML - An HTML string.
  */
 NodeListPrototype.html = getFirstSetEachElement('html', 1);
 
@@ -1475,7 +1516,7 @@ NodeListPrototype.prop = getFirstSetEachElement('prop', 2);
 NodeListPrototype.remove = function() {
 	var origLen = this.length,
 		i = 1;
-	if (origLen == 0) return;
+	if (origLen === 0) return;
 	this[0].remove();
 	if (this.length == origLen) { //Non-live
 		for (; i &lt; origLen; i++) {
@@ -1537,27 +1578,28 @@ NodeListPrototype.removeProp = callOnEachElement('removeProp');
 NodeListPrototype.show = callOnEachElement('show');
 
 /**
- * Gets the text content of the first node in the list.
+ * Gets the combined text contents of each node in the list.
  * 
  * @function NodeList.prototype.text
  * @returns {String} The node's text content.
  */
 /**
- * Sets text content of each node in the list.
+ * Sets the text content of each node in the list.
  * 
  * @function NodeList.prototype.text
  * @param {String|*} text - The text or content that will be converted to a string to be set as each nodes' text content.
  */
 NodeListPrototype.text = function(text) {
-	var i = 0;
-	if (typeof text == 'undefined') {
-		for (text = ''; i &lt; this.length; i++) {
+	var len = this.length,
+		i = 0;
+	if (isUndefined(text)) { //Get
+		for (text = ''; i &lt; len; i++) {
 			text += this[i].textContent;
 		}
 		return text;
 	}
-	//else
-	for (; i &lt; this.length; i++) {
+	//Set
+	for (; i &lt; len; i++) {
 		this[i].textContent = text;
 	}
 
@@ -1582,7 +1624,7 @@ NodeListPrototype.toArray = function() {
  */
 NodeListPrototype.toggleClass = callOnEachElement('toggleClass');
 
-// #endregion NodeList
+//#endregion NodeList
 
 
 //#region ========================= HTMLCollection ===========================
@@ -1652,7 +1694,7 @@ if (!StringPrototype.contains) {
 	 *
 	 * @function String.prototype.contains
 	 * @param {String} searchString - The string to be searched for.
-	 * @param {Number} [position=0] - The position in this string at which to begin the search; defaults to 0.
+	 * @param {Number} [position=0] - The position in this string at which to begin the search.
 	 * @returns {Boolean} `true` if this string contains the search string; else `false`.
 	 * @example
 	 * var str = "Winter is coming.";
@@ -1672,15 +1714,18 @@ if (!StringPrototype.endsWith) {
 	 *
 	 * @function String.prototype.endsWith
 	 * @param {String} searchString - The characters to be searched for at the end of this string.
-	 * @returns {Boolean} `true` if this string ends with the search string; else `false`.
+	 * @param {Number} [position=this.length] - Search within this string as if this string were only this long; clamped within the range established by this string's length.
+	 * @returns {Boolean} `true` if this string ends with `searchString`; else `false`.
 	 * @example
 	 * var str = "Who am I, Gamling?";
 	 * alert( str.endsWith("Gamling?") );  // true
 	 * alert( str.endsWith("am I") );      // false
+	 * alert( str.endsWith("am I", 8) );   // true
 	 */
 	defineProperty(StringPrototype, 'endsWith', {
-		value: function(searchString) {
-			return this.indexOf(searchString, this.length - searchString.length) >= 0;
+		value: function(searchString, position) {
+			position = (position &amp;&amp; position &lt; this.length ? position : this.length) - searchString.length;
+			return this.indexOf(searchString, position) === position;
 		}
 	});
 }
@@ -1690,19 +1735,23 @@ if (!StringPrototype.repeat) {
 	 * Copies the current string a given number of times and returns the new string.
 	 *
 	 * @function String.prototype.repeat
-	 * @param {Number} count - An integer between 0 and +∞ : [ 0, +∞).
+	 * @param {Number} count - An integer between 0 and +∞ : [0, +∞).
 	 * @returns {String}
+	 * @throws {RangeError} The repeat count must be positive and less than infinity.
 	 * @example
-	 * "abc".repeat(0)  // ""
-	 * "abc".repeat(1)  // "abc"
-	 * "abc".repeat(2)  // "abcabc"
-	 * "0".repeat(5)    // "00000" 
+	 * "abc".repeat(0)   // ""
+	 * "abc".repeat(1)   // "abc"
+	 * "abc".repeat(2)   // "abcabc"
+	 * "abc".repeat(3.5) // "abcabcabc" (count will be converted to integer)
+	 * "0".repeat(5)     // "00000"
 	 */
 	defineProperty(StringPrototype, 'repeat', {
 		value: function(count) {
-			var str = this,
-				i = 1;
-			for (; i &lt; count; i++) {
+			count = parseInt(count || 0);
+			if (isNaN(count) || count &lt; 0) {
+				throw new RangeError('The repeat count must be positive and less than infinity.');
+			}
+			for (var str = '', i = 0; i &lt; count; i++) {
 				str += this;
 			}
 			return str;
@@ -1716,15 +1765,18 @@ if (!StringPrototype.startsWith) {
 	 *
 	 * @function String.prototype.startsWith
 	 * @param {String} searchString - The characters to be searched for at the start of this string.
+	 * @param {Number} [position=0] - The position in this string at which to begin searching for `searchString`.
 	 * @returns {Boolean} `true` if this string starts with the search string; else `false`.
 	 * @example
 	 * var str = "Who am I, Gamling?";
-	 * alert( str.endsWith("Who") );   // true
-	 * alert( str.endsWith("am I") );  // false
+	 * alert( str.endsWith("Who") );      // true
+	 * alert( str.endsWith("am I") );     // false
+	 * alert( str.endsWith("am I", 4) );  // true
 	 */
 	defineProperty(StringPrototype, 'startsWith', {
-		value: function(searchString) {
-			return this.lastIndexOf(searchString, 0) == 0;
+		value: function(searchString, position) {
+			position = position || 0;
+			return this.lastIndexOf(searchString, position) === position;
 		}
 	});
 }
@@ -1747,11 +1799,51 @@ defineProperty(StringPrototype, 'tokenize', {
 //#endregion String
 
 
-/*
- * Private, constant variables for improving function performance and compatibility with IE 9
- */
-var _isChrome = !!window.chrome &amp;&amp; !(window.opera || navigator.userAgent.indexOf(' OPR/') >= 0),
-	_isOldIE = Firebolt.create('div').html('&lt;!--[if lte IE9]>&lt;i>&lt;/i>&lt;![endif]-->').$tag('i').length > 0;
+//#region ============ Browser Compatibility and Speed Boosters ==============
+
+var isOldIE = Firebolt.create('div').html('&lt;!--[if IE]>&lt;i>&lt;/i>&lt;![endif]-->').$tag('i').length > 0,
+	isChrome = !!window.chrome &amp;&amp; !window.opera,
+	noMultiParamClassListFuncs = (function() {
+		var elem = Firebolt.create('div');
+		elem.classList.add('one', 'two');
+		return elem.className.length !== 7;
+	})();
+
+if (isOldIE) {
+	/* Make the hasClass() function compatible with IE9 */
+	HTMLElementPrototype.hasClass = function(className) {
+		return new RegExp('(?:^|\\s)' + className + '(?:\\s|$)').test(this.className);
+	};
+}
+
+/* Browser (definitely IE) compatibility and Chrome speed boost for removeClass() */
+if (isChrome || noMultiParamClassListFuncs) {
+	HTMLElementPrototype.removeClass = function(value) {
+		if (isUndefined(value)) {
+			this.className = ''; //Remove all classes
+		}
+		else {
+			var remClasses = value.split(' '),
+				curClasses = this.className.split(rgxSpaceChars),
+				newClassName = '',
+				i = 0;
+			for (; i &lt; curClasses.length; i++) {
+				if (curClasses[i] &amp;&amp; !remClasses.contains(curClasses[i])) {
+					if (newClassName) newClassName += ' ';
+					newClassName += curClasses[i];
+				}
+			}
+			//Only assign if the new class name is different (shorter) to avoid unnecessary rendering
+			if (newClassName.length &lt; this.className.length) {
+				this.className = newClassName;
+			}
+		}
+
+		return this;
+	};
+}
+
+//#endregion Browser Compatibility and Speed Boosters
 
 })(window, document);
 
@@ -1816,7 +1908,7 @@ function Timer(callback, interval, onstart, onstop) {
 }
 
 //#endregion Timer
-</pre> </article> </section> </div> <div class="clearfix"></div> <footer> <span class="copyright"> Copyright © 2014 Nathan Woltman </span> <br/> <span class="jsdoc-message"> Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sun Apr 06 2014 20:53:51 GMT-0400 (EDT) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>. </span> </footer> </div> <br clear="both"> </div> </div> <script src="scripts/sunlight.js"></script> <script src="scripts/sunlight.javascript.js"></script> <script src="scripts/sunlight-plugin.doclinks.js"></script> <script src="scripts/sunlight-plugin.linenumbers.js"></script> <script src="scripts/sunlight-plugin.menu.js"></script> <script src="scripts/jquery.min.js"></script> <script src="scripts/jquery.scrollTo.js"></script> <script src="scripts/jquery.localScroll.js"></script> <script src="scripts/bootstrap-dropdown.js"></script> <script src="scripts/toc.js"></script> <script>  Sunlight.highlightAll({lineNumbers: true,  showMenu: true, enableDoclinks: true}); </script> <script>
+</pre> </article> </section> </div> <div class="clearfix"></div> <footer> <span class="copyright"> Copyright © 2014 Nathan Woltman </span> <br/> <span class="jsdoc-message"> Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sat Apr 19 2014 06:30:13 GMT-0400 (EDT) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>. </span> </footer> </div> <br clear="both"> </div> </div> <script src="scripts/sunlight.js"></script> <script src="scripts/sunlight.javascript.js"></script> <script src="scripts/sunlight-plugin.doclinks.js"></script> <script src="scripts/sunlight-plugin.linenumbers.js"></script> <script src="scripts/sunlight-plugin.menu.js"></script> <script src="scripts/jquery.min.js"></script> <script src="scripts/jquery.scrollTo.js"></script> <script src="scripts/jquery.localScroll.js"></script> <script src="scripts/bootstrap-dropdown.js"></script> <script src="scripts/toc.js"></script> <script>  Sunlight.highlightAll({lineNumbers: true,  showMenu: true, enableDoclinks: true}); </script> <script>
 		$( function () {
 			$( "#toc" ).toc( {
 			    anchorName  : function(i, heading, prefix) {

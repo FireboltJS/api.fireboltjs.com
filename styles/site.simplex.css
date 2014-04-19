@@ -5745,3 +5745,17 @@ article .toc-shim{
 	position: relative;
 	z-index: -1;
 }
+.description h5 {
+  font-size: 17px;
+  margin-bottom: 3px;
+  margin-top: 12px;
+}
+.description pre {
+	margin-bottom: 20px;
+}
+span.optional:before {
+	content: '[';
+}
+span.optional:after {
+	content: ']';
+}
