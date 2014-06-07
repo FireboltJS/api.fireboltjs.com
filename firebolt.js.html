@@ -1,6 +1,6 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="utf-8"> <title>Firebolt Source: firebolt.js</title> <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]--> <link type="text/css" rel="stylesheet" href="styles/sunlight.default.css"> <link type="text/css" rel="stylesheet" href="styles/site.simplex.css"> </head> <body> <div class="container-fluid"> <div class="navbar navbar-fixed-top "> <div class="navbar-inner"> <a class="brand" href="index.html">Firebolt</a> <ul class="nav"> <li class="dropdown"> <a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="Firebolt.html">Firebolt</a> </li> </ul> </li> <li class="dropdown"> <a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="Array.html">Array</a> </li> <li> <a href="Element.html">Element</a> </li> <li> <a href="Function.html">Function</a> </li> <li> <a href="HTMLCollection.html">HTMLCollection</a> </li> <li> <a href="HTMLElement.html">HTMLElement</a> </li> <li> <a href="Node.html">Node</a> </li> <li> <a href="NodeCollection.html">NodeCollection</a> </li> <li> <a href="NodeList.html">NodeList</a> </li> <li> <a href="Number.html">Number</a> </li> <li> <a href="Object.html">Object</a> </li> <li> <a href="ParentNode.html">ParentNode</a> </li> <li> <a href="String.html">String</a> </li> <li> <a href="Timer.html">Timer</a> </li> </ul> </li> <li class="dropdown"> <a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="global.html#$1">$1</a> </li> <li> <a href="global.html#$_GET">$_GET</a> </li> <li> <a href="global.html#$CLS">$CLS</a> </li> <li> <a href="global.html#$ID">$ID</a> </li> <li> <a href="global.html#$NAME">$NAME</a> </li> <li> <a href="global.html#$TAG">$TAG</a> </li> <li> <a href="global.html#Firebolt">Firebolt</a> </li> </ul> </li> </ul> </div> </div> <div class="row-fluid"> <div class="span12"> <div id="main"> <h1 class="page-title">Source: firebolt.js</h1> <section> <article> <pre class="sunlight-highlight-javascript linenums">﻿/**
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="utf-8"> <title>Firebolt Source: firebolt.js</title> <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]--> <link type="text/css" rel="stylesheet" href="styles/sunlight.default.css"> <link type="text/css" rel="stylesheet" href="styles/site.simplex.css"> </head> <body> <div class="container-fluid"> <div class="navbar navbar-fixed-top "> <div class="navbar-inner"> <a class="brand" href="index.html">Firebolt</a> <ul class="nav"> <li class="dropdown"> <a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="Firebolt.html">Firebolt</a> </li> </ul> </li> <li class="dropdown"> <a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="Array.html">Array</a> </li> <li> <a href="Element.html">Element</a> </li> <li> <a href="Function.html">Function</a> </li> <li> <a href="HTMLCollection.html">HTMLCollection</a> </li> <li> <a href="HTMLElement.html">HTMLElement</a> </li> <li> <a href="Node.html">Node</a> </li> <li> <a href="NodeCollection.html">NodeCollection</a> </li> <li> <a href="NodeList.html">NodeList</a> </li> <li> <a href="Number.html">Number</a> </li> <li> <a href="Object.html">Object</a> </li> <li> <a href="ParentNode.html">ParentNode</a> </li> <li> <a href="String.html">String</a> </li> </ul> </li> <li class="dropdown"> <a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="global.html#$1">$1</a> </li> <li> <a href="global.html#$_GET">$_GET</a> </li> <li> <a href="global.html#$CLS">$CLS</a> </li> <li> <a href="global.html#$ID">$ID</a> </li> <li> <a href="global.html#$NAME">$NAME</a> </li> <li> <a href="global.html#$TAG">$TAG</a> </li> <li> <a href="global.html#Firebolt">Firebolt</a> </li> </ul> </li> </ul> </div> </div> <div class="row-fluid"> <div class="span12"> <div id="main"> <h1 class="page-title">Source: firebolt.js</h1> <section> <article> <pre class="sunlight-highlight-javascript linenums">﻿/**
  * Firebolt current core file.
- * @version 0.4.0
+ * @version 0.4.1
  * @author Nathan Woltman
  * @copyright 2014 Nathan Woltman
  * @license MIT https://github.com/FireboltJS/Firebolt/blob/master/LICENSE.txt
@@ -37,10 +37,6 @@ var prototype = 'prototype',
 	dataKeyPrivate = ('FB' + 1 / Math.random()).replace('.', ''),
 	rgxNoParse = /^\d+\D/, //Don't try to parse strings that look like numbers but have non-digit characters
 
-	//Need this (unfortunately) to choose how to define the Firebolt function
-	isIE = /*@cc_on!@*/false || !!document.documentMode,
-	Firebolt,
-
 	/* Pre-built RegExps */
 	rgxGetOrHead = /GET|HEAD/i, //Determines if a request is a GET or HEAD request
 	rgxDomain = /\/?\/\/(?:\w+\.)?(.*?)(?:\/|$)/,
@@ -64,6 +60,7 @@ var prototype = 'prototype',
 		},
 		async: true,
 		contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+		headers: {'X-Requested-With': 'XMLHttpRequest'},
 		isLocal: /^(?:file|.*-extension|widget):\/\//.test(location.href),
 		jsonp: 'callback',
 		jsonpCallback: function() {
@@ -152,26 +149,25 @@ function createFragment(content) {
  */
 function data(dataStore, obj, key, value) {
 	var dataObject = obj[dataStore],
-		isElement = obj instanceof Element,
+		numAttributes = obj &amp;&amp; obj.nodeType === 1 &amp;&amp; obj.attributes.length,
 		dataAttributes,
-		attributes,
 		i;
 
 	if (!dataObject) {
 		//Define a non-enumerable object
 		defineProperty(obj, dataStore, {
-			writable: true, //So that the data can easily be cleared by .removeData()
 			value: dataObject = {}
 		});
 
-		//If this is an Element, try loading "data-*" attributes
-		if (isElement) {
-			var attrib, val;
+		//If the object is an Element with attributes, try loading "data-*" attributes
+		if (numAttributes) {
+			var attributes = obj.attributes,
+				attrib,
+				val;
 
 			dataAttributes = {};
-			attributes = obj.attributes;
 
-			for (i = 0; i &lt; attributes.length; i++) {
+			for (i = 0; i &lt; numAttributes; i++) {
 				attrib = attributes[i];
 				if (attrib.name.startsWith('data-')) {
 					if (!rgxNoParse.test(val = attrib.value)) {
@@ -196,12 +192,12 @@ function data(dataStore, obj, key, value) {
 	/* This may look confusing but it's really saving space (as in the amount of code in the file).
 	 * What's happening is that `dataAttributes` is getting set to itself (if it was created above)
 	 * or it is set to the private data and is then checked to see if it is an empty object. */
-	if (isElement &amp;&amp; !isEmptyObject(dataAttributes = dataAttributes || dataPrivate(obj, 'data-attrs'))) {
-		//Find the attributes the data object does not already have from the data attributes
-		//and add them to the data object
-		attributes = ArrayPrototype.remove.apply(Object.keys(dataAttributes), Object.keys(dataObject));
-		for (i = 0; i &lt; attributes.length; i++) {
-			dataObject[attributes[i]] = dataAttributes[attributes[i]];
+	if (numAttributes &amp;&amp; !isEmptyObject(dataAttributes = dataAttributes || dataPrivate(obj, 'data-attrs'))) {
+		//Add the data attributes to the data object if it does not already have the key
+		for (i in dataAttributes) {
+			if (!(i in dataObject)) {
+				dataObject[i] = dataAttributes[i];
+			}
 		}
 	}
 
@@ -232,13 +228,22 @@ function dataPrivate(obj, key, value) {
 function extend(target) {
 	var numArgs = arguments.length,
 		i = 1,
+		arg,
 		key;
 
 	if (numArgs > 1) {
+		if (target === true) { //`target` was actually the `deep` variable; extend recursively
+			return extendDeep.apply(this, ArrayPrototype.slice.call(arguments, 1));
+		}
+		if (!target) { //`target` was actually the `deep` variable, but was false
+			target = arguments[i++];
+		}
+
 		//Extend the target object
 		for (; i &lt; numArgs; i++) {
-			for (key in arguments[i]) {
-				target[key] = arguments[i][key];
+			arg = arguments[i];
+			for (key in arg) {
+				target[key] = arg[key];
 			}
 		}
 		return target;
@@ -248,6 +253,33 @@ function extend(target) {
 	extend(NodeCollectionPrototype, target);
 	extend(NodeListPrototype, target);
 	extend(HTMLCollectionPrototype, target);
+}
+
+/*
+ * @see Firebolt.extend
+ */
+function extendDeep(target) {
+	var numArgs = arguments.length,
+		i = 1,
+		arg,
+		key,
+		val;
+
+	//Extend the target object, extending recursively if both the new and current value are plain objects
+	for (; i &lt; numArgs; i++) {
+		arg = arguments[i];
+		for (key in arg) {
+			val = arg[key];
+			if (isPlainObject(target[key]) &amp;&amp; isPlainObject(val)) {
+				extendDeep(target[key], val);
+			}
+			else {
+				target[key] = val;
+			}
+		}
+	}
+
+	return target;
 }
 
 /*
@@ -349,13 +381,6 @@ function insertBefore(newNode, refNode) {
 }
 
 /*
- * @see Firebolt.isPlainObject
- */
-function isPlainObject(obj) {
-	return Object[prototype].toString.call(obj) == '[object Object]';
-}
-
-/*
  * @see Firebolt.isEmptyObject
  */
 function isEmptyObject(object) {
@@ -403,6 +428,13 @@ function isHtml(str) {
 		return 1;
 	}
 	return 0;
+}
+
+/*
+ * @see Firebolt.isPlainObject
+ */
+function isPlainObject(obj) {
+	return toString.call(obj) == '[object Object]';
 }
 
 function isUndefined(value) {
@@ -749,49 +781,31 @@ ElementPrototype.matches = ElementPrototype.matches || ElementPrototype.webkitMa
  * $('1&lt;br>2&lt;br>3 >');     // Returns ["1", &lt;br>​, "2", &lt;br>​, "3 >"]
  * $.create('div')         // Calls Firebolt's `create()` method to create a new div element 
  */
-Firebolt =
-	isIE //Define the Firebolt selector specifically for IE (because IE is awful with querySelectorAll for IDs)
-	? function(str) {
-		if (str[0] === '#') { //Check for a single ID
-			if (rgxClassOrId.test(str)) {
-				var collection = new NodeCollection(),
-					element = document.getElementById(str.slice(1));
-				if (element) {
-					collection.length = 1;
-					collection[0] = element;
-				}
-				return collection;
+function Firebolt(str) {
+	if (str[0] === '#') { //Check for a single ID
+		if (rgxClassOrId.test(str)) {
+			var collection = new NodeCollection(),
+				element = document.getElementById(str.slice(1));
+			if (element) {
+				collection.length = 1;
+				collection[0] = element;
 			}
+			return collection;
 		}
-		else if (str[0] === '.') { //Check for a single class name
-			if (rgxClassOrId.test(str)) {
-				return document.getElementsByClassName(str.slice(1));
-			}
-		}
-		else if (rgxTag.test(str)) { //Check for a single tag name
-			return document.getElementsByTagName(str);
-		}
-		else if (isHtml(str)) { //Check if the string is an HTML string
-			return htmlToNodes(str);
-		}
-		return document.querySelectorAll(str);
 	}
-	: function(str) {
-		if (str[0] !== '#') { //Filter out selection by ID
-			if (str[0] === '.') { //Check for a single class name
-				if (rgxClassOrId.test(str)) {
-					return document.getElementsByClassName(str.slice(1));
-				}
-			}
-			else if (rgxTag.test(str)) { //Check for a single tag name
-				return document.getElementsByTagName(str);
-			}
-			else if (isHtml(str)) { //Check if the string is an HTML string
-				return htmlToNodes(str);
-			}
+	else if (str[0] === '.') { //Check for a single class name
+		if (rgxClassOrId.test(str)) {
+			return document.getElementsByClassName(str.slice(1));
 		}
-		return document.querySelectorAll(str);
-	};
+	}
+	else if (rgxTag.test(str)) { //Check for a single tag name
+		return document.getElementsByTagName(str);
+	}
+	else if (isHtml(str)) { //Check if the string is an HTML string
+		return htmlToNodes(str);
+	}
+	return document.querySelectorAll(str);
+}
 
 /**
  * Perform an asynchronous HTTP (Ajax) request.  
@@ -834,7 +848,7 @@ Firebolt.ajax = function(url, settings) {
 	}
 
 	//Merge the passed in settings object with the default values
-	settings = extend({}, ajaxSettings, settings);
+	settings = extendDeep({}, ajaxSettings, settings);
 
 	url = settings.url;
 
@@ -1120,9 +1134,6 @@ Firebolt.ajax = function(url, settings) {
 		//Open the request
 		xhr.open(type, url, async, settings.username, settings.password);
 
-		//Merge provided headers with defaults
-		headers = extend({ 'X-Requested-With': 'XMLHttpRequest' }, headers);
-
 		//Set the content type header if the user has changed it from the default or there is data to submit
 		if (settings.contentType != ajaxSettings.contentType || userData) {
 			headers['Content-Type'] = settings.contentType;
@@ -1143,8 +1154,8 @@ Firebolt.ajax = function(url, settings) {
 			return false;
 		}
 
-		//If a timeout still needs to be added, do that now
-		if (timeout) {
+		//Set timeout if there is one
+		if (timeout > 0) {
 			timeout = setTimeout(function() {
 				textStatus = 'timeout';
 				xhr.abort();
@@ -1168,7 +1179,7 @@ Firebolt.ajaxSettings = ajaxSettings;
  * @memberOf Firebolt
  */
 Firebolt.ajaxSetup = function(options) {
-	return extend(ajaxSettings, options);
+	return extendDeep(ajaxSettings, options);
 }
 
 /**
@@ -1208,6 +1219,15 @@ Firebolt.delay = function(callback, ms) {
 /**
  * Merge the contents of one or more objects into the first object.
  * 
+ * @param {Object} target - The object that will receive the new properties.
+ * @param {...Object} object - One or more objects whose properties will be added to the target object.
+ * @returns {Object} The target object.
+ * @memberOf Firebolt
+ */
+/**
+ * Recursively merge the contents of one or more objects into the target object.
+ * 
+ * @param {Boolean} deep - If `true`, the merge becomes recursive (performs a deep copy on object values).
  * @param {Object} target - The object that will receive the new properties.
  * @param {...Object} object - One or more objects whose properties will be added to the target object.
  * @returns {Object} The target object.
@@ -1403,11 +1423,11 @@ function serializeTraditional(obj) {
 		if (Array.isArray(value)) {
 			for (i = 0; i &lt; value.length; i++) {
 				//Add key again for multiple array values
-				qs += (i ? '&amp;' + encodeURIComponent(key) : '') + '=' + encodeURIComponent(value[i].toString());
+				qs += (i ? '&amp;' + encodeURIComponent(key) : '') + '=' + encodeURIComponent(value[i]);
 			}
 		}
 		else {
-			qs += '=' + encodeURIComponent(value.toString());
+			qs += '=' + encodeURIComponent(value);
 		}
 	}
 
@@ -1818,8 +1838,8 @@ HTMLElementPrototype.css = function(prop, value) {
  * &lt;div id="mydiv">&lt;/div>
  */
 HTMLElementPrototype.empty = function() {
-	while (this.childNodes.length) {
-		this.removeChild(this.childNodes[0]);
+	while (this.firstChild) {
+		this.removeChild(this.firstChild);
 	}
 
 	return this;
@@ -2306,6 +2326,12 @@ NodeCollectionPrototype.constructor = NodeCollectionPrototype.__C__ = NodeCollec
  * Adds the queried elements to a copy of the existing collection (if they are not already in the collection)
  * and returns the result.
  * 
+ * Do not assume that this method appends the elements to the existing collection in the order they are passed to the method
+ * (that's what `concat` is for). When all elements are members of the same document, the resulting collection will be sorted
+ * in document order; that is, in order of each element's appearance in the document. If the collection consists of elements
+ * from different documents or ones not in any document, the sort order is undefined (but elements in the collection that are
+ * in the same document will still be in document order).
+ * 
  * @function NodeCollection.prototype.add
  * @param {String} selector - A CSS selector to use to find elements to add to the collection.
  * @returns {NodeCollection} The result of unioning the queried elements with the current collection.
@@ -2319,28 +2345,48 @@ NodeCollectionPrototype.constructor = NodeCollectionPrototype.__C__ = NodeCollec
  */
 /**
  * Adds the element to a copy of the existing collection (if it is not already in the collection)
- * and returns the result.  
- * If you're sure the element is not already in the collection, using {@linkcode NodeCollection#concat|concat}
- * would be more efficient.
+ * and returns the result.
  * 
  * @function NodeCollection.prototype.add
  * @param {Element|Node} element - A DOM Element or Node.
  * @returns {NodeCollection} The result of adding the element to the current collection.
  */
 /**
- * Returns the union of the current collection and the input one.  
- * If you're sure that none of the elements in the passed in collection are in the current collection,
- * using {@linkcode NodeCollection#concat|concat} would be more efficient.
+ * Returns the union of the current collection and the input one.
+ * 
+ * Do not assume that this method appends the elements to the existing collection in the order they are passed to the method
+ * (that's what `concat` is for). When all elements are members of the same document, the resulting collection will be sorted
+ * in document order; that is, in order of each element's appearance in the document. If the collection consists of elements
+ * from different documents or ones not in any document, the sort order is undefined (but elements in the collection that are
+ * in the same document will still be in document order).
  * 
  * @function NodeCollection.prototype.add
  * @param {NodeCollection|NodeList|HTMLCollection|Node[]} elements
  * @returns {NodeCollection} The result of adding the input elements to the current collection.
  */
 NodeCollectionPrototype.add = function(input) {
+	var newCollection;
 	if (input.nodeType) {
-		return this.concat(this.contains(input) ? 0 : input); //(this.concat(0) effectively clones the collection)
+		if (this.contains(input)) {
+			return new NodeCollection(this);
+		}
+		newCollection = this.concat(input);
 	}
-	return this.union(typeofString(input) ? Firebolt(input) : input);
+	else {
+		newCollection = this.union(typeofString(input) ? Firebolt(input) : input);
+	}
+
+	return newCollection.sort(function(a, b) {
+		var pos = a.compareDocumentPosition(b);
+		if (pos &amp; 4) { //Node a should come first
+			pos = -1;
+		}
+		else if (pos &amp; 1) { //Nodes are in different documents
+			pos = 0;
+		}
+		//else b should come first (pos is already positive)
+		return pos;
+	});
 };
 
 /**
@@ -2974,7 +3020,7 @@ getOwnPropertyNames(NodeCollectionPrototype)
 			HTMLCollectionPrototype[methodName] = NodeListPrototype[methodName] = NodeCollectionPrototype[methodName];
 		}
 	});
-
+	window.NodeCollection = NodeCollection;
 /**
  * Returns the NodeCollection equivalent of the NodeList.
  * 
@@ -3029,6 +3075,8 @@ Number[prototype].toPaddedString = function(length, radix) {
 
 
 //#region ============================ Object ================================
+
+//TODO: Move these somwhere else. Extending Object.prototype is bad.
 
 /**
  * @class Object
@@ -3098,16 +3146,22 @@ defineProperties(Object[prototype], {
 	 */
 	removeData: {
 		value: function(input) {
+			var dataObject = this[dataKeyPublic],
+				i = 0;
+
 			if (isUndefined(input)) {
-				this[dataKeyPublic] = {};
+				if (dataObject[dataKeyPrivate]) {
+					//Try deleting the data attributes object in case it was saved to the object (element)
+					delete dataObject[dataKeyPrivate]['data-attrs'];
+				}
+				input = Object.keys(dataObject); //Select all items for removal
 			}
-			else {
-				if (typeofString(input)) {
-					input = input.split(' ');
-				}
-				for (var i = 0; i &lt; input.length; i++) {
-					delete this[dataKeyPublic][input[i]];
-				}
+			else if (typeofString(input)) {
+				input = input.split(' ');
+			}
+
+			for (; i &lt; input.length; i++) {
+				delete dataObject[input[i]];
 			}
 
 			return this;
@@ -3258,9 +3312,9 @@ defineProperties(StringPrototype, {
 
 //#region ============ Browser Compatibility and Speed Boosters ==============
 
-var isOldIE = createElement('div').html('&lt;!--[if IE]>&lt;i>&lt;/i>&lt;![endif]-->').$TAG('i').length > 0,
-	isChrome = !!window.chrome &amp;&amp; !window.opera,
+var isOldIE = createElement('div').html('&lt;!--[if IE]>&lt;i>&lt;/i>&lt;![endif]-->').$TAG('i').length,
 	isIOS = navigator.platform.startsWith('iP'), // iPhone, iPad, iPod
+	usesWebkit = 'WebkitAppearance' in document.documentElement.style,
 	noMultiParamClassListFuncs = (function() {
 		var elem = createElement('div');
 		if (elem.classList) {
@@ -3269,15 +3323,14 @@ var isOldIE = createElement('div').html('&lt;!--[if IE]>&lt;i>&lt;/i>&lt;![endif
 		return elem.className.length !== 7;
 	})();
 
-if (isOldIE) {
-	/* Make the hasClass() function compatible with IE9 */
+if (isOldIE) { //IE9 compatibility
 	HTMLElementPrototype.hasClass = function(className) {
 		return new RegExp('(?:^|\\s)' + className + '(?:\\s|$)').test(this.className);
 	};
 }
 
-/* Browser (definitely IE) compatibility and Chrome speed boost for removeClass() */
-if (isChrome || noMultiParamClassListFuncs) {
+/* Browser (definitely IE) compatibility and speed boost for removeClass() */
+if (noMultiParamClassListFuncs || (usesWebkit &amp;&amp; !isIOS)) {
 	HTMLElementPrototype.removeClass = function(value) {
 		if (isUndefined(value)) {
 			this.className = ''; //Remove all classes
@@ -3302,7 +3355,7 @@ if (isChrome || noMultiParamClassListFuncs) {
 	};
 }
 
-if (isChrome || isIOS) {
+if (usesWebkit) { //WebKit speed boosters
 	window.$1 = function(selector) {
 		if (selector[0] !== '#') { //Filter out selection by ID
 			if (selector[0] === '.') { //Check for a single class name
@@ -3321,69 +3374,7 @@ if (isChrome || isIOS) {
 //#endregion Browser Compatibility and Speed Boosters
 
 })(window, document);
-
-
-//#region ============================ Timer =================================
-
-/**
- * @class
- * @example
- * // HTML
- * &lt;div id="display">0&lt;/div>
- * 
- * // JavaScript
- * var seconds = 0,
- *     counter = new Timer(function() {
- *         seconds++;
- *         $ID('display').text(seconds);
- *     }, 1000).start();
- */
-function Timer(callback, interval, onstart, onstop) {
-	// Private
-	var _clearRef,
-		_isRunning = false,
-		_this = this;
-
-	// Public
-	_this.callback = callback;
-
-	_this.interval = interval;
-
-	_this.onstart = onstart;
-
-	_this.onstop = onstop;
-
-	_this.isRunning = function() {
-		return _isRunning;
-	};
-
-	_this.start = function() {
-		if (!_isRunning) {
-			_clearRef = setInterval(function() {
-				_this.callback();
-			}, interval);
-			_isRunning = true;
-			if (_this.onstart) {
-				_this.onstart();
-			}
-		}
-		return _this;
-	};
-
-	_this.stop = function() {
-		if (_isRunning) {
-			clearInterval(_clearRef);
-			_isRunning = false;
-			if (_this.onstop) {
-				_this.onstop();
-			}
-		}
-		return _this;
-	};
-}
-
-//#endregion Timer
-</pre> </article> </section> </div> <div class="clearfix"></div> <footer> <span class="copyright"> Copyright © 2014 Nathan Woltman </span> <br/> <span class="jsdoc-message"> Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Mon Jun 02 2014 01:35:05 GMT-0700 (PDT) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>. </span> </footer> </div> <br clear="both"> </div> </div> <script src="scripts/sunlight.js"></script> <script src="scripts/sunlight.javascript.js"></script> <script src="scripts/sunlight-plugin.doclinks.js"></script> <script src="scripts/sunlight-plugin.linenumbers.js"></script> <script src="scripts/sunlight-plugin.menu.js"></script> <script src="scripts/jquery.min.js"></script> <script src="scripts/jquery.scrollTo.js"></script> <script src="scripts/jquery.localScroll.js"></script> <script src="scripts/bootstrap-dropdown.js"></script> <script src="scripts/toc.js"></script> <script>  Sunlight.highlightAll({lineNumbers: true,  showMenu: true, enableDoclinks: true}); </script> <script>
+</pre> </article> </section> </div> <div class="clearfix"></div> <footer> <span class="copyright"> Copyright © 2014 Nathan Woltman </span> <br/> <span class="jsdoc-message"> Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sat Jun 07 2014 01:28:41 GMT-0700 (PDT) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>. </span> </footer> </div> <br clear="both"> </div> </div> <script src="scripts/sunlight.js"></script> <script src="scripts/sunlight.javascript.js"></script> <script src="scripts/sunlight-plugin.doclinks.js"></script> <script src="scripts/sunlight-plugin.linenumbers.js"></script> <script src="scripts/sunlight-plugin.menu.js"></script> <script src="scripts/jquery.min.js"></script> <script src="scripts/jquery.scrollTo.js"></script> <script src="scripts/jquery.localScroll.js"></script> <script src="scripts/bootstrap-dropdown.js"></script> <script src="scripts/toc.js"></script> <script>  Sunlight.highlightAll({lineNumbers: true,  showMenu: true, enableDoclinks: true}); </script> <script>
 		$( function () {
 			$( "#toc" ).toc( {
 			    anchorName  : function(i, heading, prefix) {
