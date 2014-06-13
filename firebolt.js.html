@@ -1,6 +1,6 @@
 <!DOCTYPE html> <html lang="en"> <head> <meta charset="utf-8"> <title>Firebolt Source: firebolt.js</title> <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]--> <link type="text/css" rel="stylesheet" href="styles/sunlight.default.css"> <link type="text/css" rel="stylesheet" href="styles/site.simplex.css"> </head> <body> <div class="container-fluid"> <div class="navbar navbar-fixed-top "> <div class="navbar-inner"> <a class="brand" href="index.html">Firebolt</a> <ul class="nav"> <li class="dropdown"> <a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="Firebolt.html">Firebolt</a> </li> </ul> </li> <li class="dropdown"> <a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="Array.html">Array</a> </li> <li> <a href="Element.html">Element</a> </li> <li> <a href="Function.html">Function</a> </li> <li> <a href="HTMLCollection.html">HTMLCollection</a> </li> <li> <a href="HTMLElement.html">HTMLElement</a> </li> <li> <a href="Node.html">Node</a> </li> <li> <a href="NodeCollection.html">NodeCollection</a> </li> <li> <a href="NodeList.html">NodeList</a> </li> <li> <a href="Number.html">Number</a> </li> <li> <a href="Object.html">Object</a> </li> <li> <a href="ParentNode.html">ParentNode</a> </li> <li> <a href="String.html">String</a> </li> </ul> </li> <li class="dropdown"> <a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="global.html#$1">$1</a> </li> <li> <a href="global.html#$_GET">$_GET</a> </li> <li> <a href="global.html#$CLS">$CLS</a> </li> <li> <a href="global.html#$ID">$ID</a> </li> <li> <a href="global.html#$NAME">$NAME</a> </li> <li> <a href="global.html#$TAG">$TAG</a> </li> <li> <a href="global.html#Firebolt">Firebolt</a> </li> </ul> </li> </ul> </div> </div> <div class="row-fluid"> <div class="span12"> <div id="main"> <h1 class="page-title">Source: firebolt.js</h1> <section> <article> <pre class="sunlight-highlight-javascript linenums">﻿/**
  * Firebolt current core file.
- * @version 0.4.1
+ * @version 0.5.0
  * @author Nathan Woltman
  * @copyright 2014 Nathan Woltman
  * @license MIT https://github.com/FireboltJS/Firebolt/blob/master/LICENSE.txt
@@ -10,68 +10,6 @@
 	'use strict';
 
 //#region =========================== Private ================================
-
-/*
- * Local variables that are compressed when this file is minified.
- */
-var prototype = 'prototype',
-	ArrayPrototype = Array[prototype],
-	ElementPrototype = Element[prototype],
-	HTMLElementPrototype = HTMLElement[prototype],
-	NodePrototype = Node[prototype],
-	NodeListPrototype = NodeList[prototype],
-	HTMLCollectionPrototype = HTMLCollection[prototype],
-	StringPrototype = String[prototype],
-	Object = window.Object,
-	defineProperty = Object.defineProperty,
-	defineProperties = Object.defineProperties,
-	getOwnPropertyNames = Object.getOwnPropertyNames,
-	arrayFilter = ArrayPrototype.filter,
-	encodeURIComponent = window.encodeURIComponent,
-
-	//Property strings
-	insertAdjacentHTML = 'insertAdjacentHTML',
-
-	//Data variables
-	dataKeyPublic = ('FB' + 1 / Math.random()).replace('.', ''),
-	dataKeyPrivate = ('FB' + 1 / Math.random()).replace('.', ''),
-	rgxNoParse = /^\d+\D/, //Don't try to parse strings that look like numbers but have non-digit characters
-
-	/* Pre-built RegExps */
-	rgxGetOrHead = /GET|HEAD/i, //Determines if a request is a GET or HEAD request
-	rgxDomain = /\/?\/\/(?:\w+\.)?(.*?)(?:\/|$)/,
-	rgxDifferentNL = /^(?:af|ap|be|ins|pre|pu|tog)|remove(?:Class)?$/, //Determines if the function is different for NodeLists
-	rgxClassOrId = /^.[\w_-]+$/,
-	rgxTag = /^[A-Za-z]+$/,
-	rgxNonWhitespace = /\S+/g,
-	rgxSpaceChars = /[ \n\r\t\f]+/, //From W3C http://www.w3.org/TR/html5/single-page.html#space-character
-	
-	/* AJAX */
-	timestamp = Date.now(),
-	oldCallbacks = [],
-	ajaxSettings = {
-		accept: {
-			'*': '*/*',
-			html: 'text/html',
-			json: 'application/json, text/javascript',
-			script: 'text/javascript, application/javascript, application/ecmascript, application/x-ecmascript',
-			text: 'text/plain',
-			xml: 'application/xml, text/xml'
-		},
-		async: true,
-		contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-		headers: {'X-Requested-With': 'XMLHttpRequest'},
-		isLocal: /^(?:file|.*-extension|widget):\/\//.test(location.href),
-		jsonp: 'callback',
-		jsonpCallback: function() {
-			var callback = oldCallbacks.pop() || dataKeyPublic + "_" + (timestamp++);
-			this[callback] = true;
-			return callback;
-		},
-		type: 'GET',
-		url: location.href,
-		xhr: XMLHttpRequest
-	};
 
 /** 
  * Calls the function with the passed in name on each element in an enumerable.
@@ -323,6 +261,99 @@ function getFirstSetEachElement(funcName, callback) {
 	};
 }
 
+/*
+ * Returns a function that creates a set of elements in a certain direction around a given node (i.e. parents, children, siblings).
+ * 
+ * @param {String} funcName - The name of a function that retrieves elements for a single node.
+ * @param {Function|?} sorter - A function used to sort the union of multiple sets of returned elements.
+ * If sorter == 0, return an 'until' Node function.
+ */
+function getGetDirElementsFunc(funcName, sorter) {
+	//For NodeCollection.prototype
+	if (sorter) {
+		return function(arg1, arg2) {
+			var len = this.length;
+
+			//Simple and speedy for one node
+			if (len === 1) {
+				return this[0][funcName](arg1, arg2);
+			}
+
+			//Build a list of NodeCollections
+			var collections = [],
+				i = 0;
+			for (; i &lt; len; i++) {
+				collections.push(this[i][funcName](arg1, arg2));
+			}
+
+			//Union the collections so that the resulting collection contains unique elements
+			//and return the sorted result
+			return ArrayPrototype.union.apply(NodeCollectionPrototype, collections).sort(sorter);
+		};
+	}
+
+	//For Node.prototype
+	return sorter == 0
+		//nextUntil, prevUntil, parentsUntil
+		? function(until, filter) {
+			var nc = new NodeCollection(),
+				node = this,
+				stop = typeofString(until)
+					? function() { //Match by selector
+						return node.matches(until);
+					}
+					: until &amp;&amp; until.length
+						? function() { //Match by Node[]
+							return until.contains(node);
+						}
+						: function() { //Match by Node (or if `until.length === 0`, this will always be false)
+							return node == until;
+						};
+			while ((node = node[funcName]) &amp;&amp; !stop()) {
+				if (!filter || node.matches(filter)) {
+					nc.push(node);
+				}
+			}
+			return nc;
+		}
+		//nextAll, prevAll, parents
+		: function(selector) {
+			var nc = new NodeCollection(),
+				node = this;
+			while (node = node[funcName]) {
+				if (!selector || node.matches(selector)) {
+					nc.push(node);
+				}
+			}
+			return nc;
+		};
+};
+
+/*
+ * Returns a function for Node#next(), Node#prev(), NodeCollection#next(), or NodeCollection#prev().
+ * 
+ * @param {Boolean} [forNode=false] - If truthy, returns the function for Node.prototype (else the NodeCollection version).
+ */
+function getNextOrPrevFunc(dirElementSibling, forNode) {
+	return forNode
+		? function(selector) {
+			var sibling = this[dirElementSibling];
+			return (!selector || sibling &amp;&amp; sibling.matches(selector)) &amp;&amp; sibling || null;
+		}
+		: function(selector) {
+			var nc = new NodeCollection(),
+				i = 0,
+				sibling;
+			for (; i &lt; this.length; i++) {
+				sibling = this[i][dirElementSibling];
+				if (sibling &amp;&amp; (!selector || sibling.matches(selector))) {
+					nc.push(sibling);
+				}
+			}
+			return nc;
+		};
+}
+
 /* 
  * Returns the function body for Node#[putAfter, putBefore, or prependTo]
  * 
@@ -363,21 +394,58 @@ function getPutOrToFunction(funcName) {
  * Takes an HTML string and returns a NodeList created by the HTML.
  */
 function htmlToNodes(html) {
-	return createElement('div').html(html).childNodes;
+	//Speedy for normal elements
+	var nodes = createElement('body').html(html).childNodes;
+
+	//If no nodes were created, it might be because browsers won't create certain elements in a body tag
+	//Such elements include &lt;thead>, &lt;tbody>, &lt;tfoot>, &lt;head>, &lt;body>, &lt;html>
+	if (!nodes.length &amp;&amp; html) { //Check html to make sure it's not an empty string
+		var elem;
+
+		if (html.contains('&lt;tr')) {
+			elem = createElement('tbody');
+		}
+		else if (html.contains('&lt;td')) {
+			elem = createElement('tr');
+		}
+		else if (rgxTableLevel1.test(html)) {
+			elem = createElement('table');
+		}
+		else {
+			elem = createElement('html');
+
+			if (html.startsWith('&lt;html')) {
+				return new NodeCollection(elem);
+			}
+
+			elem.innerHTML = html;
+
+			if (html.contains('&lt;head')) {
+				return new NodeCollection(elem.firstChild);
+			}
+			if (html.contains('&lt;body')) {
+				return new NodeCollection(elem.lastChild);
+			}
+		}
+
+		nodes = elem.html(html).childNodes;
+	}
+
+	return nodes;
 }
 
 /*
  * Function for inserting a node after a reference node.
  */
 function insertAfter(newNode, refNode) {
-	refNode.parentNode.insertBefore(newNode, refNode.nextSibling);
+	refNode[parentNode].insertBefore(newNode, refNode.nextSibling);
 }
 
 /*
  * Function for inserting a node before a reference node.
  */
 function insertBefore(newNode, refNode) {
-	refNode.parentNode.insertBefore(newNode, refNode);
+	refNode[parentNode].insertBefore(newNode, refNode);
 }
 
 /*
@@ -448,9 +516,115 @@ function prepend(newNode, refNode) {
 	refNode.insertBefore(newNode, refNode.firstChild);
 }
 
+function sortDocOrder(a, b) {
+	var pos = a.compareDocumentPosition(b);
+	if (pos &amp; 4) { //Node a should come first
+		pos = -1;
+	}
+	else if (pos &amp; 1) { //Nodes are in different documents
+		pos = 0;
+	}
+	//else node b should come first (pos is already positive)
+	return pos;
+}
+
+function sortRevDocOrder(a, b) {
+	var pos = a.compareDocumentPosition(b);
+	if (pos &amp; 2) { //Node b should come first
+		pos = -1;
+	}
+	else if (pos &amp; 1) { //Nodes are in different documents
+		pos = 0;
+	}
+	//else node a should come first (pos is already positive)
+	return pos;
+}
+
+/**
+ * Converts a set of nodes to a NodeCollection.
+ */
+function toNC(nodes) {
+	var len = nodes.length,
+		nc = new NodeCollection(len),
+		i = 0;
+	for (; i &lt; len; i++) {
+		nc[i] = nodes[i];
+	}
+	return nc;
+}
+
 function typeofString(value) {
 	return typeof value == 'string';
 }
+
+/*
+ * Local variables that are compressed when this file is minified.
+ */
+var prototype = 'prototype',
+	ArrayPrototype = Array[prototype],
+	ElementPrototype = Element[prototype],
+	HTMLElementPrototype = HTMLElement[prototype],
+	NodePrototype = Node[prototype],
+	NodeListPrototype = NodeList[prototype],
+	HTMLCollectionPrototype = HTMLCollection[prototype],
+	StringPrototype = String[prototype],
+	Object = window.Object,
+	defineProperty = Object.defineProperty,
+	defineProperties = Object.defineProperties,
+	getOwnPropertyNames = Object.getOwnPropertyNames,
+	encodeURIComponent = window.encodeURIComponent,
+
+	//Property strings
+	insertAdjacentHTML = 'insertAdjacentHTML',
+	parentNode = 'parentNode',
+	nextElementSibling = 'nextElementSibling',
+	previousElementSibling = 'previousElementSibling',
+
+	//Data variables
+	dataKeyPublic = ('FB' + 1 / Math.random()).replace('.', ''),
+	dataKeyPrivate = ('FB' + 1 / Math.random()).replace('.', ''),
+	rgxNoParse = /^\d+\D/, //Don't try to parse strings that look like numbers but have non-digit characters
+
+	/* Pre-built RegExps */
+	rgxTableLevel1 = /&lt;t(?:h|b|f)/i, //Detects (non-deprected) first-level table elements: &lt;thead>, &lt;tbody>, &lt;tfoot>
+	rgxGetOrHead = /GET|HEAD/i, //Determines if a request is a GET or HEAD request
+	rgxDomain = /\/?\/\/(?:\w+\.)?(.*?)(?:\/|$)/,
+	rgxDifferentNL = /^(?:af|ap|be|ins|prep|pu|tog)|remove(?:Class)?$/, //Determines if the function is different for NodeLists
+	rgxClassOrId = /^.[\w_-]+$/,
+	rgxTag = /^[A-Za-z]+$/,
+	rgxNonWhitespace = /\S+/g,
+	rgxSpaceChars = /[ \n\r\t\f]+/, //From W3C http://www.w3.org/TR/html5/single-page.html#space-character
+
+	/* AJAX */
+	timestamp = Date.now(),
+	oldCallbacks = [],
+	ajaxSettings = {
+		accept: {
+			'*': '*/*',
+			html: 'text/html',
+			json: 'application/json, text/javascript',
+			script: 'text/javascript, application/javascript, application/ecmascript, application/x-ecmascript',
+			text: 'text/plain',
+			xml: 'application/xml, text/xml'
+		},
+		async: true,
+		contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+		headers: {'X-Requested-With': 'XMLHttpRequest'},
+		isLocal: /^(?:file|.*-extension|widget):\/\//.test(location.href),
+		jsonp: 'callback',
+		jsonpCallback: function() {
+			var callback = oldCallbacks.pop() || dataKeyPublic + "_" + (timestamp++);
+			this[callback] = true;
+			return callback;
+		},
+		type: 'GET',
+		url: location.href,
+		xhr: XMLHttpRequest
+	},
+
+	_$ = window.$, //Save the `$` variable in case something else is currently using it
+
+	any, //Arbitrary variable that may be used for whatever
 
 //#endregion Private
 
@@ -464,12 +638,9 @@ function typeofString(value) {
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array|Array - JavaScript | MDN}
  */
 
-defineProperties(ArrayPrototype, {
+arrayExtensions = {
 	/* Private reference to the constructor */
-	__C__: {
-		writable: true,
-		value: Array
-	},
+	__C__: Array,
 
 	/**
 	 * Returns a copy of the array with all "empty" items (as defined by {@linkcode Firebolt.isEmpty}) removed.
@@ -479,18 +650,15 @@ defineProperties(ArrayPrototype, {
 	 * @returns {Array} A clean copy of the array.
 	 * @see Firebolt.isEmpty
 	 */
-	clean: {
-		writable: true,
-		value: function(allowEmptyStrings) {
-			var cleaned = [],
-				i = 0;
-			for (; i &lt; this.length; i++) {
-				if (!Firebolt.isEmpty(this[i], allowEmptyStrings)) {
-					cleaned.push(this[i]);
-				}
+	clean: function(allowEmptyStrings) {
+		var cleaned = [],
+			i = 0;
+		for (; i &lt; this.length; i++) {
+			if (!Firebolt.isEmpty(this[i], allowEmptyStrings)) {
+				cleaned.push(this[i]);
 			}
-			return cleaned;
 		}
+		return cleaned;
 	},
 
 	/**
@@ -498,10 +666,8 @@ defineProperties(ArrayPrototype, {
 	 * 
 	 * @function Array.prototype.clear
 	 */
-	clear: {
-		value: function() {
-			this.length = 0;
-		}
+	clear: function() {
+		this.length = 0;
 	},
 
 	/**
@@ -510,17 +676,14 @@ defineProperties(ArrayPrototype, {
 	 * @function Array.prototype.clone
 	 * @returns {Array} A copy of the array.
 	 */
-	clone: {
-		writable: true,
-		value: function() {
-			var len = this.length,
-				clone = new Array(len),
-				i = 0;
-			for (; i &lt; len; i++) {
-				clone[i] = this[i];
-			}
-			return clone;
+	clone: function() {
+		var len = this.length,
+			clone = new this.__C__(len),
+			i = 0;
+		for (; i &lt; len; i++) {
+			clone[i] = this[i];
 		}
+		return clone;
 	},
 
 	/**
@@ -529,10 +692,8 @@ defineProperties(ArrayPrototype, {
 	 * @function Array.prototype.contains
 	 * @returns {Boolean} `true` if the item is in the array; else `false`.
 	 */
-	contains: {
-		value: function(e) {
-			return this.indexOf(e) >= 0;
-		}
+	contains: function(e) {
+		return this.indexOf(e) >= 0;
 	},
 
 	/**
@@ -543,21 +704,19 @@ defineProperties(ArrayPrototype, {
 	 * @param {Array|Enumerable} array - Array or other enumerable object that has a `length` property.
 	 * @returns {Boolean} `true` if the arrays are equal; else `false`.
 	 */
-	equals: {
-		value: function(array) {
-			if (this === array) { //Easy check
-				return true;
-			}
-			if (this.length !== array.length) {
-				return false;
-			}
-			for (var i = 0; i &lt; array.length; i++) {
-				if (this[i] !== array[i]) {
-					return false;
-				}
-			}
+	equals: function(array) {
+		if (this === array) { //Easy check
 			return true;
 		}
+		if (this.length !== array.length) {
+			return false;
+		}
+		for (var i = 0; i &lt; array.length; i++) {
+			if (this[i] !== array[i]) {
+				return false;
+			}
+		}
+		return true;
 	},
 
 	/**
@@ -569,17 +728,15 @@ defineProperties(ArrayPrototype, {
 	 * @example
 	 * [1, 2, 3].intersect([2, 3, 4]);  // returns [2, 3]
 	 */
-	intersect: {
-		value: function(array) {
-			var intersection = new this.__C__(),
-				i = 0;
-			for (; i &lt; array.length; i++) {
-				if (this.contains(array[i]) &amp;&amp; intersection.indexOf(array[i]) &lt; 0) {
-					intersection.push(array[i]);
-				}
+	intersect: function(array) {
+		var intersection = new this.__C__(),
+			i = 0;
+		for (; i &lt; array.length; i++) {
+			if (this.contains(array[i]) &amp;&amp; intersection.indexOf(array[i]) &lt; 0) {
+				intersection.push(array[i]);
 			}
-			return intersection;
 		}
+		return intersection;
 	},
 
 	/**
@@ -588,10 +745,8 @@ defineProperties(ArrayPrototype, {
 	 * @function Array.prototype.last
 	 * @returns {*} The last item in the array, or `undefined` if the array is empty.
 	 */
-	last: {
-		value: function() {
-			return this[this.length - 1];
-		}
+	last: function() {
+		return this[this.length - 1];
 	},
 
 	/**
@@ -601,20 +756,17 @@ defineProperties(ArrayPrototype, {
 	 * @param {...*} items - Items to remove from the array.
 	 * @returns {Array} A reference to the array (so it's chainable).
 	 */
-	remove: {
-		writable: true,
-		value: function() {
-			for (var rindex, i = 0; i &lt; arguments.length; i++) {
-				while ((rindex = this.indexOf(arguments[i])) >= 0) {
-					this.splice(rindex, 1);
-					if (!this.length) {
-						return this; //Exit early since there is nothing left to remove
-					}
+	remove: function() {
+		for (var rindex, i = 0; i &lt; arguments.length; i++) {
+			while ((rindex = this.indexOf(arguments[i])) >= 0) {
+				this.splice(rindex, 1);
+				if (!this.length) {
+					return this; //Exit early since there is nothing left to remove
 				}
 			}
-
-			return this;
 		}
+
+		return this;
 	},
 
 	/**
@@ -626,22 +778,20 @@ defineProperties(ArrayPrototype, {
 	 * @example
 	 * [1, 2, 3].union([2, 3, 4, 5]);  // returns [1, 2, 3, 4, 5]
 	 */
-	union: {
-		value: function() {
-			var union = this.unique(),
-				i = 0,
-				array,
-				j;
-			for (; i &lt; arguments.length; i++) {
-				array = arguments[i];
-				for (j = 0; j &lt; array.length; j++) {
-					if (union.indexOf(array[j]) &lt; 0) {
-						union.push(array[j]);
-					}
+	union: function() {
+		var union = this.unique(),
+			i = 0,
+			array,
+			j;
+		for (; i &lt; arguments.length; i++) {
+			array = arguments[i];
+			for (j = 0; j &lt; array.length; j++) {
+				if (union.indexOf(array[j]) &lt; 0) {
+					union.push(array[j]);
 				}
-			};
-			return union;
-		}
+			}
+		};
+		return union;
 	},
 
 	/**
@@ -652,17 +802,15 @@ defineProperties(ArrayPrototype, {
 	 * @example
 	 * [1, 2, 3, 2, 1].unique();  // returns [1, 2, 3]
 	 */
-	unique: {
-		value: function() {
-			var uniq = new this.__C__(),
-				i = 0;
-			for (; i &lt; this.length; i++) {
-				if (uniq.indexOf(this[i]) &lt; 0) {
-					uniq.push(this[i]);
-				}
+	unique: function() {
+		var uniq = new this.__C__(),
+			i = 0;
+		for (; i &lt; this.length; i++) {
+			if (uniq.indexOf(this[i]) &lt; 0) {
+				uniq.push(this[i]);
 			}
-			return uniq;
 		}
+		return uniq;
 	},
 
 	/**
@@ -674,12 +822,11 @@ defineProperties(ArrayPrototype, {
 	 * @example
 	 * [1, 2, 3, 4, 5, 6].without(3, 4, 6);  // returns [1, 2, 5]
 	 */
-	without: {
-		value: function() {
-			var array = new this.__C__(),
-				i = 0,
-				j;
-			skip:
+	without: function() {
+		var array = new this.__C__(),
+			i = 0,
+			j;
+		skip:
 			for (; i &lt; this.length; i++) {
 				for (j = 0; j &lt; arguments.length; j++) {
 					if (this[i] === arguments[j]) {
@@ -688,10 +835,16 @@ defineProperties(ArrayPrototype, {
 				}
 				array.push(this[i]);
 			}
-			return array;
-		}
+		return array;
 	}
-});
+};
+
+//Define the properties on Array.prototype with Object.defineProperty
+for (any in arrayExtensions) {
+	defineProperty(ArrayPrototype, any, {
+		value: arrayExtensions[any]
+	});
+}
 
 //#endregion Array
 
@@ -760,13 +913,12 @@ ElementPrototype.matches = ElementPrototype.matches || ElementPrototype.webkitMa
 //#region =========================== Firebolt ===============================
 
 /**
- * The Firebolt namespace object and selector function.
- * Can be referenced by the synonyms `FB` and `$` (on pages where `$` has not already been defined).
+ * The Firebolt namespace object and selector function (can also be referenced by the synonyms `FB` and `$`).
  * @namespace Firebolt
  */
 
 /**
- * The global Firebolt function. Can be referenced by the synonyms `FB` and `$` (on pages where `$` has not already been defined).  
+ * The global Firebolt function (can also be referenced by the synonyms `FB` and `$`).  
  * Returns a list of the elements either found in the DOM that match the passed in CSS selector or created by passing an HTML string.
  * 
  * @global
@@ -776,21 +928,19 @@ ElementPrototype.matches = ElementPrototype.matches || ElementPrototype.webkitMa
  * @returns {NodeList|HTMLCollection} A list of selected elements or newly created elements.
  * 
  * @example
- * $('button.btn-success') // Returns all button elements with the class "btn-success"
- * $('str &lt;p>content&lt;/p>') // Creates a set of nodes and returns it as a NodeList (in this case ["str ", &lt;p>content&lt;/p>])
- * $('1&lt;br>2&lt;br>3 >');     // Returns ["1", &lt;br>​, "2", &lt;br>​, "3 >"]
- * $.create('div')         // Calls Firebolt's `create()` method to create a new div element 
+ * $('button.btn-success'); // Returns all button elements with the class "btn-success"
+ * $('str &lt;p>content&lt;/p>'); // Creates a set of nodes and returns it as a NodeList (in this case ["str ", &lt;p>content&lt;/p>])
+ * $.create('div');         // Calls Firebolt's `create()` method to create a new div element 
  */
 function Firebolt(str) {
 	if (str[0] === '#') { //Check for a single ID
 		if (rgxClassOrId.test(str)) {
-			var collection = new NodeCollection(),
-				element = document.getElementById(str.slice(1));
-			if (element) {
-				collection.length = 1;
-				collection[0] = element;
+			var nc = new NodeCollection(),
+				elem = document.getElementById(str.slice(1));
+			if (elem) {
+				nc.push(elem);
 			}
-			return collection;
+			return nc;
 		}
 	}
 	else if (str[0] === '.') { //Check for a single class name
@@ -802,7 +952,7 @@ function Firebolt(str) {
 		return document.getElementsByTagName(str);
 	}
 	else if (isHtml(str)) { //Check if the string is an HTML string
-		return htmlToNodes(str);
+		return createFragment([str]).childNodes;
 	}
 	return document.querySelectorAll(str);
 }
@@ -1011,9 +1161,7 @@ Firebolt.ajax = function(url, settings) {
 
 		//Always remove the script after the request is done
 		completes.push(function() {
-			if (script.parentNode) { //Check for parent node before attempting to remove (may have been removed by timeout)
-				script.remove();
-			}
+			script.remove();
 		});
 
 		if (beforeSend &amp;&amp; beforeSend.call(context, xhr, settings) === false) {
@@ -1186,10 +1334,10 @@ Firebolt.ajaxSetup = function(options) {
  * Creates a new element with the specified tag name and attributes (optional).  
  * Partially an alias of `document.createElement()`.
  * 
+ * @function Firebolt.create
  * @param {String} tagName
  * @param {Object} [attributes] - The JSON-formatted attributes that the element should have once constructed.
  * @returns {Element}
- * @memberOf Firebolt
  */
 Firebolt.create = createElement;
 
@@ -1213,25 +1361,25 @@ Firebolt.delay = function(callback, ms) {
 /**
  * Extend the "Firebolt object" (a.k.a. NodeCollection, NodeList, and HTMLCollection).
  * 
+ * @function Firebolt.extend
  * @param {Object} object - An object with properties to add to the prototype of the collections returned by Firebolt.
- * @memberOf Firebolt
  */
 /**
  * Merge the contents of one or more objects into the first object.
  * 
+ * @function Firebolt.extend
  * @param {Object} target - The object that will receive the new properties.
  * @param {...Object} object - One or more objects whose properties will be added to the target object.
  * @returns {Object} The target object.
- * @memberOf Firebolt
  */
 /**
  * Recursively merge the contents of one or more objects into the target object.
  * 
+ * @function Firebolt.extend
  * @param {Boolean} deep - If `true`, the merge becomes recursive (performs a deep copy on object values).
  * @param {Object} target - The object that will receive the new properties.
  * @param {...Object} object - One or more objects whose properties will be added to the target object.
  * @returns {Object} The target object.
- * @memberOf Firebolt
  */
 Firebolt.extend = extend;
 
@@ -1354,17 +1502,17 @@ Firebolt.isEmpty = function(value, allowEmptyString) {
 /**
  * Determines if an object is empty (contains no enumerable properties).
  * 
+ * @function Firebolt.isEmptyObject
  * @param {Object} object - The object to be tested.
  * @returns {Boolean}
- * @memberOf Firebolt
  */
 Firebolt.isEmptyObject = isEmptyObject;
 
 /**
  * Determines if a variable is a plain object.
  * 
+ * @function Firebolt.isPlainObject
  * @param {*} obj - The item to test.
- * @memberOf Firebolt
  */
 Firebolt.isPlainObject = isPlainObject;
 
@@ -1376,6 +1524,20 @@ Firebolt.isPlainObject = isPlainObject;
  */
 Firebolt.isTouchDevice = function() {
 	return 'ontouchstart' in window || 'onmsgesturechange' in window;
+};
+
+/**
+ * Relinquishes Firebolt's control of the global `$` variable (restoring its previous value in the process).
+ * 
+ * @returns Firebolt
+ * @memberOf Firebolt
+ */
+Firebolt.noConflict = function() {
+	if (window.$ === Firebolt) {
+		window.$ = _$;
+	}
+
+	return Firebolt;
 };
 
 /**
@@ -1450,6 +1612,17 @@ Firebolt.ready = function(callback) {
 	}
 };
 
+/**
+ * Creates a TextNode from the provided string.
+ * 
+ * @memberOf Firebolt
+ * @param {String} text - The string used to construct the TextNode.
+ * @returns {TextNode}
+ */
+Firebolt.text = function(text) {
+	return document.createTextNode(text);
+}
+
 //#endregion Firebolt
 
 
@@ -1484,13 +1657,9 @@ Function[prototype].delay = function(ms) {
 //#region =========================== Globals ================================
 
 /*
- * Firebolt namespace reference objects.
+ * Firebolt reference objects.
  */
-
-window.FB = window.Firebolt = Firebolt;
-if (!window.$) {
-	window.$ = Firebolt;
-}
+window.$ = window.FB = window.Firebolt = Firebolt;
 
 /**
  * PHP-style associative array (Object) of URL parameters.
@@ -2145,7 +2314,7 @@ NodePrototype.afterPut = function() {
 	insertAfter(createFragment(arguments), this);
 
 	return this;
-}
+};
 
 /**
  * Appends this node to the end of the target element(s).
@@ -2172,7 +2341,7 @@ NodePrototype.appendTo = function(target) {
 	}
 
 	return this;
-}
+};
 
 /**
  * Appends content to the end of the node.
@@ -2185,7 +2354,7 @@ NodePrototype.appendWith = function() {
 	this.appendChild(createFragment(arguments));
 
 	return this;
-}
+};
 
 /**
  * Inserts content before the node.
@@ -2199,7 +2368,84 @@ NodePrototype.beforePut = function() {
 	insertBefore(createFragment(arguments), this);
 
 	return this;
-}
+};
+
+/**
+ * Gets the node's child elements, optionally filtered by a selector.
+ * 
+ * @function Node.prototype.childElements
+ * @param {String} [selector] - A CSS selector used to filter the returned set of elements.
+ * @returns {NodeCollection}
+ */
+NodePrototype.childElements = function(selector) {
+	//If this node does not implement the ParentNode interface, this.children will be `undefined`,
+	//so set children to an empty array so nothing will be added to the returned NodeCollection
+	var children = this.children || [];
+
+	if (!selector) {
+		return toNC(children);
+	}
+
+	var nc = new NodeCollection(),
+		i = 0;
+	for (; i &lt; children.length; i++) {
+		if (children[i].matches(selector)) {
+			nc.push(children[i]);
+		}
+	}
+	return nc;
+};
+
+/**
+ * Get the node's immediately following sibling element. If a selector is provided, it retrieves the next sibling only if it matches that selector.
+ * 
+ * @function Node.prototype.next
+ * @param {String} [selector] - A CSS selector to match the next sibling against.
+ * @returns {?Element}
+ */
+NodePrototype.next = getNextOrPrevFunc(nextElementSibling, 1);
+
+/**
+ * Gets all following siblings of the node, optionally filtered by a selector.
+ * 
+ * @function Node.prototype.nextAll
+ * @param {String} [selector] - A CSS selector used to filter the returned set of elements.
+ * @returns {NodeCollection} The set of following sibling elements in order beginning with the closest sibling.
+ */
+NodePrototype.nextAll = getGetDirElementsFunc(nextElementSibling);
+
+/**
+ * Gets the node's following siblings, up to but not including the element matched by the selector, DOM node,
+ * or node in a collection.
+ * 
+ * @function Node.prototype.nextUntil
+ * @param {String|Element|Node[]} [nodes] - A CSS selector, an element, or a collection of nodes used to indicate
+ * that no more siblings should be considered.
+ * @param {String} [filter] - A CSS selector used to filter the returned set of elements.
+ * @returns {NodeCollection} - The set of following sibling elements in order beginning with the closest sibling.
+ */
+NodePrototype.nextUntil = getGetDirElementsFunc(nextElementSibling, 0);
+
+/**
+ * Gets the node's ancestors, optionally filtered by a selector.
+ * 
+ * @function Node.prototype.parents
+ * @param {String} [selector] - A CSS selector used to filter the returned set of elements.
+ * @returns {NodeCollection} - The set of the node's ancestors, ordered from the immediate parent on up.
+ */
+NodePrototype.parents = getGetDirElementsFunc('parentElement');
+
+/**
+ * Gets the node's ancestors, up to but not including the element matched by the selector, DOM node,
+ * or node in a collection.
+ * 
+ * @function Node.prototype.parentsUntil
+ * @param {String|Element|Node[]} [nodes] - A CSS selector, an element, or a collection of nodes used to indicate
+ * that no more ancestors should be considered.
+ * @param {String} [filter] - A CSS selector used to filter the returned set of elements.
+ * @returns {NodeCollection} - The set of the node's ancestors, ordered from the immediate parent on up.
+ */
+NodePrototype.parentsUntil = getGetDirElementsFunc('parentElement', 0);
 
 /**
  * Prepends content to the beginning of the node.
@@ -2212,7 +2458,7 @@ NodePrototype.prependWith = function() {
 	prepend(createFragment(arguments), this);
 
 	return this;
-}
+};
 
 /**
  * Prepends this node to the beginning of the target element(s).
@@ -2222,6 +2468,36 @@ NodePrototype.prependWith = function() {
  * @throws {HierarchyRequestError} The target(s) must implement the {@link ParentNode} interface.
  */
 NodePrototype.prependTo = getNodeInsertingFunction(prepend);
+
+/**
+ * Get the node's immediately preceeding sibling element. If a selector is provided, it retrieves the previous sibling only if it matches that selector.
+ * 
+ * @function Node.prototype.prev
+ * @param {String} [selector] - A CSS selector to match the previous sibling against.
+ * @returns {?Element}
+ */
+NodePrototype.prev = getNextOrPrevFunc(previousElementSibling, 1);
+
+/**
+ * Gets all preceeding siblings of the node, optionally filtered by a selector.
+ * 
+ * @function Node.prototype.prevAll
+ * @param {String} [selector] - A CSS selector used to filter the returned set of elements.
+ * @returns {NodeCollection} The set of preceeding sibling elements in order beginning with the closest sibling.
+ */
+NodePrototype.prevAll = getGetDirElementsFunc(previousElementSibling);
+
+/**
+ * Gets the node's preceeding siblings, up to but not including the element matched by the selector, DOM node,
+ * or node in a collection.
+ * 
+ * @function Node.prototype.prevUntil
+ * @param {String|Element|Node[]} [nodes] - A CSS selector, an element, or a collection of nodes used to indicate
+ * that no more siblings should be considered.
+ * @param {String} [filter] - A CSS selector used to filter the returned set of elements.
+ * @returns {NodeCollection} - The set of preceeding sibling elements in order beginning with the closest sibling.
+ */
+NodePrototype.prevUntil = getGetDirElementsFunc(previousElementSibling, 0);
 
 /**
  * Inserts this node directly after the specified target(s).
@@ -2248,7 +2524,22 @@ NodePrototype.putBefore = getNodeInsertingFunction(insertBefore);
  * @returns void (undefined)
  */
 NodePrototype.remove = function() {
-	this.parentNode.removeChild(this);
+	if (this[parentNode]) {
+		this[parentNode].removeChild(this);
+	}
+};
+
+/**
+ * Gets the node's siblings, optionally filtered by a selector.
+ * 
+ * @function Node.prototype.siblings
+ * @param {String} [selector] - A CSS selector used to filter the returned set of elements.
+ * @returns {NodeCollection} - The set of the node's ancestors, ordered from the immediate parent on up.
+ * @throws {TypeError} The subject node must have a
+ * {@link https://developer.mozilla.org/en-US/docs/Web/API/Node.parentNode|ParentNode}.
+ */
+NodePrototype.siblings = function(selector) {
+	return ArrayPrototype.remove.call(this.parentNode.childElements(selector), this);
 };
 
 /**
@@ -2289,38 +2580,31 @@ NodePrototype.text = function(text) {
 //#region ======================== NodeCollection ============================
 
 /**
- * This constructor is not globally visible and should not be called by user code.
+ * Same constructor as {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array|Array}.
  * 
  * @class NodeCollection
  * @mixes Array
  * @classdesc
- * A mutable collection of DOM nodes. It subclasses the native {@link Array} class (but take note that the
- * {@linkcode NodeCollection#clean|clean}, {@linkcode NodeCollection#remove|remove}, and {@linkcode NodeCollection#filter|filter}
- * functions have been overridden), and has all of the main DOM-manipulating functions.
+ * A mutable collection of DOM nodes. It subclasses the native {@link Array} class (but take note that the `.clean()`,
+ * `.remove()`, and `.filter()` functions have been overridden), and has all of the main DOM-manipulating functions.
  * 
  * It should be noted that all functions that do not have a specified return value, return the calling object,
  * allowing for function chaining.
  */
-/*
- * @private
- * @constructs NodeCollection
- * @param {NodeList|HTMLCollection|Node[]} [nodes] - The collection of nodes the NodeCollection will be comprised of.
- */
-function NodeCollection(nodes) {
-	if (nodes) {
-		var len = this.length = nodes.length,
-			i = 0;
-		for (; i &lt; len; i++) {
-			this[i] = nodes[i];
-		}
-	}
-}
+var
+	//&lt;iframe> Array subclassing
+	NodeCollection = window.NodeCollection = document.head.appendChild(any = createElement('iframe')).contentWindow.Array,
 
-/* Subclass Array (not perfectly, but pretty close) */
-var NodeCollectionPrototype = NodeCollection[prototype] = new Array;
+	//Extend NodeCollection's prototype with the Array functions
+	NodeCollectionPrototype = extend(NodeCollection[prototype], arrayExtensions),
 
-/* Reset the constructor and set the private constructor (which will be inherited by NodeList and HTMLCollection) */
-NodeCollectionPrototype.constructor = NodeCollectionPrototype.__C__ = NodeCollection;
+	//Save a reference to the original filter function for use later on
+	ncFilter = NodeCollectionPrototype.filter;
+
+any.remove(); //Remove the iframe that was made to subclass Array
+
+/* Set the private constructor (which will be inherited by NodeList and HTMLCollection) */
+NodeCollectionPrototype.__C__ = NodeCollection;
 
 /**
  * Adds the queried elements to a copy of the existing collection (if they are not already in the collection)
@@ -2367,8 +2651,8 @@ NodeCollectionPrototype.constructor = NodeCollectionPrototype.__C__ = NodeCollec
 NodeCollectionPrototype.add = function(input) {
 	var newCollection;
 	if (input.nodeType) {
-		if (this.contains(input)) {
-			return new NodeCollection(this);
+		if (this.contains(input)) { //This collection already contains the input node
+			return toNC(this); //Return a clone of the current collection
 		}
 		newCollection = this.concat(input);
 	}
@@ -2376,17 +2660,7 @@ NodeCollectionPrototype.add = function(input) {
 		newCollection = this.union(typeofString(input) ? Firebolt(input) : input);
 	}
 
-	return newCollection.sort(function(a, b) {
-		var pos = a.compareDocumentPosition(b);
-		if (pos &amp; 4) { //Node a should come first
-			pos = -1;
-		}
-		else if (pos &amp; 1) { //Nodes are in different documents
-			pos = 0;
-		}
-		//else b should come first (pos is already positive)
-		return pos;
-	});
+	return newCollection.sort(sortDocOrder);
 };
 
 /**
@@ -2535,6 +2809,15 @@ NodeCollectionPrototype.beforePut = NodeCollectionPrototype.before = function() 
 }
 
 /**
+ * Gets the child elements of each element in the collection, optionally filtered by a selector.
+ * 
+ * @function NodeCollection.prototype.children
+ * @param {String} [selector] - A CSS selector used to filter the returned set of elements.
+ * @returns {NodeCollection} The set of children, sorted in document order.
+ */
+NodeCollectionPrototype.children = getGetDirElementsFunc('childElements', sortDocOrder);
+
+/**
  * Returns a clone of the collection with all non-elements removed.
  * 
  * @returns {NodeCollection} A reference to the new collection.
@@ -2551,40 +2834,6 @@ NodeCollectionPrototype.clean = function() {
  * @function NodeCollection.prototype.click
  */
 NodeCollectionPrototype.click = callOnEachElement('click');
-
-/**
- * Returns a duplicate of the collection, leaving the original intact.
- * 
- * @function NodeCollection.prototype.clone
- * @returns {NodeCollection} A copy of the collection.
- */
-NodeCollectionPrototype.clone = function() {
-	return new NodeCollection(this);
-}
-
-/**
- * Returns a new NodeCollection comprised of this collection joined with other NodeCollection(s) and/or value(s).
- * 
- * @function NodeCollection.prototype.concat
- * @param {...(Node|NodeCollection|NodeList|HTMLCollection|Node[])} nodes - One or more Nodes or NodeCollections to add to the collection.
- * @returns {NodeCollection} A copy of the collection with the added nodes.
- */
-NodeCollectionPrototype.concat = function() {
-	var collection = new NodeCollection(this),
-		i = 0,
-		arg;
-	for (; i &lt; arguments.length; i++) {
-		if (arg = arguments[i]) {
-			if (arg instanceof Node) { //Node
-				collection.push(arg);
-			}
-			else { //NodeCollection|NodeList|HTMLCollection|Node[]
-				collection.push.apply(collection, arg);
-			}
-		}
-	}
-	return collection;
-}
 
 /**
  * Gets the computed style object of the first element in the list.
@@ -2668,7 +2917,7 @@ NodeCollectionPrototype.empty = callOnEachElement('empty');
  * @returns {NodeCollection}
  */
 /**
- * Creates a new NodeCollection with all nodes that pass the test implemented by the provided function.
+ * Creates a new NodeCollection with all elements that pass the test implemented by the provided function.
  * (If you want to filter against another set of elements, use the {@linkcode Array#intersect|intersect} function.)
  * 
  * @function NodeCollection.prototype.filter
@@ -2677,11 +2926,11 @@ NodeCollectionPrototype.empty = callOnEachElement('empty');
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter|Array.prototype.filter() - JavaScript | MDN}
  */
 NodeCollectionPrototype.filter = function(selector) {
-	return new NodeCollection(arrayFilter.call(this, 
+	return ncFilter.call(this, 
 		typeofString(selector)
 			? function(node) { return node.nodeType === 1 &amp;&amp; node.matches(selector); } //Use CSS string filter
 			: selector //Use given filter function
-	));
+	);
 };
 
 /**
@@ -2709,6 +2958,18 @@ NodeCollectionPrototype.html = getFirstSetEachElement('html', function(numArgs) 
 });
 
 /**
+ * Returns the `index`th item in the collection. If `index` is greater than or equal to the number of nodes in the list, this returns `null`.
+ * 
+ * @function NodeCollection.prototype.item
+ * @param {Number} index
+ * @returns {?Node}
+ * @see http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-844377136
+ */
+NodeCollectionPrototype.item = function(index) {
+	return this[index] || null;
+};
+
+/**
  * Alias of {@link NodeCollection#putAfter} provided for similarity with jQuery.
  * 
  * @function NodeCollection.prototype.insertAfter
@@ -2722,12 +2983,76 @@ NodeCollectionPrototype.html = getFirstSetEachElement('html', function(numArgs) 
  * @see NodeCollection#putBefore
  */
 
-/*
- * See Array.prototype.map - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
+/**
+ * Get the each node's immediately following sibling element. If a selector is provided, it retrieves the next sibling only if it matches that selector.
+ * 
+ * @function NodeCollection.prototype.next
+ * @param {String} [selector] - A CSS selector to match the next sibling against.
+ * @returns {NodeCollection} The collection of sibling elements.
  */
-NodeCollectionPrototype.map = function(callback, thisArg) {
-	return new NodeCollection(ArrayPrototype.map.call(this, callback, thisArg));
-}
+NodeCollectionPrototype.next = getNextOrPrevFunc(nextElementSibling);
+
+/**
+ * Gets all following siblings of each node in the collection, optionally filtered by a selector.
+ * 
+ * @function NodeCollection.prototype.nextAll
+ * @param {String} [selector] - A CSS selector used to filter the returned set of elements.
+ * @returns {NodeCollection} The set of following sibling elements in order beginning with the closest sibling.
+ */
+NodeCollectionPrototype.nextAll = getGetDirElementsFunc('nextAll', sortDocOrder);
+
+/**
+ * Gets the following siblings of each node in the collection, up to but not including the elements matched by the selector,
+ * DOM node, or node in a collection.
+ * 
+ * @function NodeCollection.prototype.nextUntil
+ * @param {String|Element|Node[]} [nodes] - A CSS selector, an element, or a collection of nodes used to indicate
+ * that no more siblings should be considered.
+ * @param {String} [filter] - A CSS selector used to filter the returned set of elements.
+ * @returns {NodeCollection} - The set of following sibling elements in order beginning with the closest sibling.
+ */
+NodeCollectionPrototype.nextUntil = getGetDirElementsFunc('nextUntil', sortDocOrder);
+
+/**
+ * Gets the parent of each node in the collection, optionally filtered by a selector.
+ * 
+ * @function NodeCollection.prototype.parent
+ * @param {String} [selector] - A CSS selector used to filter the returned set of elements.
+ * @returns {NodeCollection} - The set of parents. Unlike the `.parents()` function, this set may include Document and DocumentFragment nodes.
+ */
+NodeCollectionPrototype.parent = function(selector) {
+	var nc = new NodeCollection(),
+		i = 0,
+		parent;
+	for (; i &lt; this.length; i++) {
+		parent = this[i].parentNode;
+		if ((!selector || (parent.matches &amp;&amp; parent.matches(selector))) &amp;&amp; nc.indexOf(parent) &lt; 0) {
+			nc.push(parent);
+		}
+	}
+	return nc;
+};
+
+/**
+ * Gets the ancestors of each node in the collection, optionally filtered by a selector.
+ * 
+ * @function NodeCollection.prototype.parents
+ * @param {String} [selector] - A CSS selector used to filter the returned set of elements.
+ * @returns {NodeCollection} - The set of ancestors, sorted in reverse document order.
+ */
+NodeCollectionPrototype.parents = getGetDirElementsFunc('parents', sortRevDocOrder);
+
+/**
+ * Gets the ancestors of each node in the collection, up to but not including the elements matched by the selector,
+ * DOM node, or node in a collection.
+ * 
+ * @function NodeCollection.prototype.parentsUntil
+ * @param {String|Element|Node[]} [nodes] - A CSS selector, an element, or a collection of nodes used to indicate
+ * that no more ancestors should be considered.
+ * @param {String} [filter] - A CSS selector used to filter the returned set of elements.
+ * @returns {NodeCollection} - The set of ancestors, sorted in reverse document order.
+ */
+NodeCollectionPrototype.parentsUntil = getGetDirElementsFunc('parentsUntil', sortRevDocOrder);
 
 /**
  * Alias of {@link NodeCollection#prependWith} provided for similarity with jQuery.  
@@ -2761,7 +3086,7 @@ NodeCollectionPrototype.prependWith = NodeCollectionPrototype.prepend = function
 	}
 
 	return this;
-}
+};
 
 /**
  * Prepends each node in this collection to the beginning of the specified target(s).
@@ -2771,6 +3096,36 @@ NodeCollectionPrototype.prependWith = NodeCollectionPrototype.prepend = function
  * @throws {HierarchyRequestError} The target(s) must implement the {@link ParentNode} interface.
  */
 NodeCollectionPrototype.prependTo = getPutOrToFunction('prependWith');
+
+/**
+ * Get the each node's immediately preceeding sibling element. If a selector is provided, it retrieves the previous sibling only if it matches that selector.
+ * 
+ * @function NodeCollection.prototype.prev
+ * @param {String} [selector] - A CSS selector to match the previous sibling against.
+ * @returns {NodeCollection} The collection of sibling elements.
+ */
+NodeCollectionPrototype.prev = getNextOrPrevFunc(previousElementSibling);
+
+/**
+ * Gets all preceeding siblings of each node in the collection, optionally filtered by a selector.
+ * 
+ * @function NodeCollection.prototype.prevAll
+ * @param {String} [selector] - A CSS selector used to filter the returned set of elements.
+ * @returns {NodeCollection} The set of preceeding sibling elements in order beginning with the closest sibling.
+ */
+NodeCollectionPrototype.prevAll = getGetDirElementsFunc('prevAll', sortRevDocOrder);
+
+/**
+ * Gets the preceeding siblings of each node in the collection, up to but not including the elements matched by the selector,
+ * DOM node, or node in a collection.
+ * 
+ * @function NodeCollection.prototype.prevUntil
+ * @param {String|Element|Node[]} [nodes] - A CSS selector, an element, or a collection of nodes used to indicate
+ * that no more siblings should be considered.
+ * @param {String} [filter] - A CSS selector used to filter the returned set of elements.
+ * @returns {NodeCollection} - The set of preceeding sibling elements in order beginning with the closest sibling.
+ */
+NodeCollectionPrototype.prevUntil = getGetDirElementsFunc('prevUntil', sortRevDocOrder);
 
 /**
  * Gets the value of the specified property of the first element in the list.
@@ -2879,12 +3234,15 @@ NodeCollectionPrototype.removeProp = callOnEachElement('removeProp');
  */
 NodeCollectionPrototype.show = callOnEachElement('show');
 
-/*
- * See Array.prototype.slice
+/**
+ * Gets the sibling elements of each node in the collection, optionally filtered by a selector.
+ * 
+ * @function NodeCollection.prototype.siblings
+ * @param {String} [selector] - A CSS selector used to filter the returned set of elements.
+ * @returns {NodeCollection} The set of siblings, sorted in document order.
+ * @throws {TypeError} The target node(s) must have a {@link https://developer.mozilla.org/en-US/docs/Web/API/Node.parentNode|ParentNode}.
  */
-NodeCollectionPrototype.slice = function(start, end) {
-	return new NodeCollection(ArrayPrototype.slice.call(this, start, end));
-}
+NodeCollectionPrototype.siblings = getGetDirElementsFunc('siblings', sortDocOrder);
 
 /**
  * Gets the combined text contents of each node in the list.
@@ -3000,7 +3358,6 @@ NodeCollectionPrototype.toggleClass = callOnEachElement('toggleClass');
 
 /* Give NodeLists and HTMLCollections many of the same prototype functions as NodeCollections */
 getOwnPropertyNames(NodeCollectionPrototype)
-	.union(getOwnPropertyNames(ArrayPrototype))
 	.remove( //These methods should not be added to the NodeList prototype
 		'clear',
 		'length',
@@ -3013,14 +3370,42 @@ getOwnPropertyNames(NodeCollectionPrototype)
 	).forEach(function(methodName) {
 		if (rgxDifferentNL.test(methodName)) { //Convert to a NodeCollection first
 			HTMLCollectionPrototype[methodName] = NodeListPrototype[methodName] = function() {
-				return NodeCollectionPrototype[methodName].apply(new NodeCollection(this), arguments);
+				return NodeCollectionPrototype[methodName].apply(toNC(this), arguments);
 			}
 		}
 		else if (!NodeListPrototype[methodName]) {
 			HTMLCollectionPrototype[methodName] = NodeListPrototype[methodName] = NodeCollectionPrototype[methodName];
 		}
 	});
-	window.NodeCollection = NodeCollection;
+
+/**
+ * Returns the specific node whose ID or, as a fallback, name matches the string specified by `name`.
+ * 
+ * @function NodeCollection.prototype.namedItem
+ * @param {String} name
+ * @returns {?Element}
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLCollection
+ */
+/**
+ * Returns the specific node whose ID or, as a fallback, name matches the string specified by `name`.
+ * 
+ * @function NodeList.prototype.namedItem
+ * @param {String} name
+ * @returns {?Element}
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLCollection
+ */
+NodeListPrototype.namedItem = NodeCollectionPrototype.namedItem = function(name) {
+	var i = 0,
+		node;
+	for (; i &lt; this.length; i++) {
+		node = this[i];
+		if (node.id == name || node.name == name) {
+			return node;
+		}
+	}
+	return null;
+};
+
 /**
  * Returns the NodeCollection equivalent of the NodeList.
  * 
@@ -3321,12 +3706,17 @@ var isOldIE = createElement('div').html('&lt;!--[if IE]>&lt;i>&lt;/i>&lt;![endif
 			elem.classList.add('one', 'two');
 		}
 		return elem.className.length !== 7;
-	})();
+	})(),
+	textNode = Firebolt.text(' ');
 
 if (isOldIE) { //IE9 compatibility
+
 	HTMLElementPrototype.hasClass = function(className) {
 		return new RegExp('(?:^|\\s)' + className + '(?:\\s|$)').test(this.className);
 	};
+
+	//Must persist the iframe otherwise IE won't remember what the NodeCollection function is
+	Firebolt.__$$ = any;
 }
 
 /* Browser (definitely IE) compatibility and speed boost for removeClass() */
@@ -3371,10 +3761,62 @@ if (usesWebkit) { //WebKit speed boosters
 	};
 }
 
+//Fix the parentElement property for Nodes in browsers than only support it on Element
+if (isUndefined(textNode.parentElement)) {
+	defineProperty(NodePrototype, 'parentElement', {
+		get: function() {
+			var parent = this[parentNode];
+			return parent &amp;&amp; parent.nodeType === 1 ? parent : null;
+		}
+	});
+}
+
+//Fix the nextElementSibling property for Nodes in browsers than only support it on Element
+if (isUndefined(textNode[nextElementSibling])) {
+	defineProperty(NodePrototype, nextElementSibling, {
+		get: function() {
+			var sibling = this;
+			while (sibling = sibling.nextSibling) {
+				if (sibling.nodeType === 1) break;
+			}
+			return sibling;
+		}
+	});
+}
+
+//Fix the previousElementSibling property for Nodes in browsers than only support it on Element
+if (isUndefined(textNode[previousElementSibling])) {
+	defineProperty(NodePrototype, previousElementSibling, {
+		get: function() {
+			var sibling = this;
+			while (sibling = sibling.previousSibling) {
+				if (sibling.nodeType === 1) break;
+			}
+			return sibling;
+		}
+	});
+}
+
+//Fix the children property for Document and DocumentFragment in browsers than only support it on Element
+if (!document.children) {
+	[Document[prototype], DocumentFragment[prototype]].forEach(function(proto) {
+		defineProperty(proto, 'children', {
+			get: function() {
+				//This method is faster in IE and slower in WebKit-based browsers, but it takes less code
+				//and calling children on Documents and DocumentFragments is rare so it's not a big deal.
+				//Also not using NodeCollection#clean() because that function is sort of on probation.
+				return ncFilter.call(this.childNodes, function(node) {
+					return node.nodeType === 1;
+				});
+			}
+		});
+	});
+}
+
 //#endregion Browser Compatibility and Speed Boosters
 
 })(window, document);
-</pre> </article> </section> </div> <div class="clearfix"></div> <footer> <span class="copyright"> Copyright © 2014 Nathan Woltman </span> <br/> <span class="jsdoc-message"> Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sat Jun 07 2014 01:28:41 GMT-0700 (PDT) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>. </span> </footer> </div> <br clear="both"> </div> </div> <script src="scripts/sunlight.js"></script> <script src="scripts/sunlight.javascript.js"></script> <script src="scripts/sunlight-plugin.doclinks.js"></script> <script src="scripts/sunlight-plugin.linenumbers.js"></script> <script src="scripts/sunlight-plugin.menu.js"></script> <script src="scripts/jquery.min.js"></script> <script src="scripts/jquery.scrollTo.js"></script> <script src="scripts/jquery.localScroll.js"></script> <script src="scripts/bootstrap-dropdown.js"></script> <script src="scripts/toc.js"></script> <script>  Sunlight.highlightAll({lineNumbers: true,  showMenu: true, enableDoclinks: true}); </script> <script>
+</pre> </article> </section> </div> <div class="clearfix"></div> <footer> <span class="copyright"> Copyright © 2014 Nathan Woltman </span> <br/> <span class="jsdoc-message"> Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Fri Jun 13 2014 00:34:43 GMT-0700 (PDT) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>. </span> </footer> </div> <br clear="both"> </div> </div> <script src="scripts/sunlight.js"></script> <script src="scripts/sunlight.javascript.js"></script> <script src="scripts/sunlight-plugin.doclinks.js"></script> <script src="scripts/sunlight-plugin.linenumbers.js"></script> <script src="scripts/sunlight-plugin.menu.js"></script> <script src="scripts/jquery.min.js"></script> <script src="scripts/jquery.scrollTo.js"></script> <script src="scripts/jquery.localScroll.js"></script> <script src="scripts/bootstrap-dropdown.js"></script> <script src="scripts/toc.js"></script> <script>  Sunlight.highlightAll({lineNumbers: true,  showMenu: true, enableDoclinks: true}); </script> <script>
 		$( function () {
 			$( "#toc" ).toc( {
 			    anchorName  : function(i, heading, prefix) {
