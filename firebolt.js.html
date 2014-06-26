@@ -1,26 +1,25 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="utf-8"> <title>Firebolt Source: firebolt.js</title> <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]--> <link type="text/css" rel="stylesheet" href="styles/sunlight.default.css"> <link type="text/css" rel="stylesheet" href="styles/site.simplex.css"> </head> <body> <div class="container-fluid"> <div class="navbar navbar-fixed-top "> <div class="navbar-inner"> <a class="brand" href="index.html">Firebolt</a> <ul class="nav"> <li class="dropdown"> <a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="Firebolt.html">Firebolt</a> </li> </ul> </li> <li class="dropdown"> <a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="Array.html">Array</a> </li> <li> <a href="Element.html">Element</a> </li> <li> <a href="Function.html">Function</a> </li> <li> <a href="HTMLCollection.html">HTMLCollection</a> </li> <li> <a href="HTMLElement.html">HTMLElement</a> </li> <li> <a href="Node.html">Node</a> </li> <li> <a href="NodeCollection.html">NodeCollection</a> </li> <li> <a href="NodeList.html">NodeList</a> </li> <li> <a href="Number.html">Number</a> </li> <li> <a href="ParentNode.html">ParentNode</a> </li> <li> <a href="String.html">String</a> </li> </ul> </li> <li class="dropdown"> <a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="global.html#$1">$1</a> </li> <li> <a href="global.html#$_GET">$_GET</a> </li> <li> <a href="global.html#$CLS">$CLS</a> </li> <li> <a href="global.html#$ID">$ID</a> </li> <li> <a href="global.html#$NAME">$NAME</a> </li> <li> <a href="global.html#$QS">$QS</a> </li> <li> <a href="global.html#$QSA">$QSA</a> </li> <li> <a href="global.html#$TAG">$TAG</a> </li> <li> <a href="global.html#Firebolt">Firebolt</a> </li> </ul> </li> </ul> </div> </div> <div class="row-fluid"> <div class="span12"> <div id="main"> <h1 class="page-title">Source: firebolt.js</h1> <section> <article> <pre class="sunlight-highlight-javascript linenums">﻿/**
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="utf-8"> <title>Firebolt Source: firebolt.js</title> <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]--> <link type="text/css" rel="stylesheet" href="styles/sunlight.default.css"> <link type="text/css" rel="stylesheet" href="styles/site.simplex.css"> </head> <body> <div class="container-fluid"> <div class="navbar navbar-fixed-top "> <div class="navbar-inner"> <a class="brand" href="index.html">Firebolt</a> <ul class="nav"> <li class="dropdown"> <a href="namespaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Namespaces<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="Firebolt.html">Firebolt</a> </li> </ul> </li> <li class="dropdown"> <a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="Array.html">Array</a> </li> <li> <a href="Element.html">Element</a> </li> <li> <a href="Function.html">Function</a> </li> <li> <a href="HTMLCollection.html">HTMLCollection</a> </li> <li> <a href="HTMLElement.html">HTMLElement</a> </li> <li> <a href="Node.html">Node</a> </li> <li> <a href="NodeCollection.html">NodeCollection</a> </li> <li> <a href="NodeList.html">NodeList</a> </li> <li> <a href="Number.html">Number</a> </li> <li> <a href="ParentNode.html">ParentNode</a> </li> <li> <a href="String.html">String</a> </li> </ul> </li> <li class="dropdown"> <a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a> <ul class="dropdown-menu "> <li> <a href="global.html#$1">$1</a> </li> <li> <a href="global.html#$$">$$</a> </li> <li> <a href="global.html#$_GET">$_GET</a> </li> <li> <a href="global.html#$CLS">$CLS</a> </li> <li> <a href="global.html#$ID">$ID</a> </li> <li> <a href="global.html#$NAME">$NAME</a> </li> <li> <a href="global.html#$QS">$QS</a> </li> <li> <a href="global.html#$QSA">$QSA</a> </li> <li> <a href="global.html#$TAG">$TAG</a> </li> <li> <a href="global.html#Firebolt">Firebolt</a> </li> </ul> </li> </ul> </div> </div> <div class="row-fluid"> <div class="span12"> <div id="main"> <h1 class="page-title">Source: firebolt.js</h1> <section> <article> <pre class="sunlight-highlight-javascript linenums">﻿/**
  * Firebolt core file
- * @version 0.6.0
+ * @version 0.7.0
  * @author Nathan Woltman
  * @copyright 2014 Nathan Woltman
  * @license MIT https://github.com/FireboltJS/Firebolt/blob/master/LICENSE.txt
  */
 
 (function(window, document, Array, Object, decodeURIComponent, encodeURIComponent) {
-	'use strict';
+
+"use strict";
 
 //#region =========================== Private ================================
 
 /** 
- * Calls the function with the passed in name on each element in a NodeCollection.
+ * Calls the passed in function on each element in a NodeCollection.
  * 
  * @private
- * @param {String} fn - The name of a function in HTMLElement's prototype.
+ * @param {Function} fn - The function to call on each element.
  * @returns {NodeCollection|NodeList|HTMLCollection} A reference to the NodeCollection.
  */
 function callOnEachElement(fn) {
-	fn = HTMLElementPrototype[fn];
-
 	return function() {
 		var len = this.length,
 			i = 0;
@@ -34,7 +33,7 @@ function callOnEachElement(fn) {
 }
 
 /*
- * @see Firebolt.create
+ * @see Firebolt.elem
  */
 function createElement(tagName, attributes) {
 	var el = document.createElement(tagName);
@@ -199,6 +198,19 @@ function removeData(object, input) {
 //#endregion Data Functions
 
 /*
+ * Uses Object.defineProperty to define the values in the prototypeExtension object on the passed in prototype object
+ */
+function definePrototypeExtensionsOn(proto) {
+	for (any in prototypeExtensions) {
+		defineProperty(proto, any, {
+			value: prototypeExtensions[any],
+			configurable: true,
+			writable: true
+		});
+	}
+}
+
+/*
  * @see Firebolt.extend
  */
 function extend(target) {
@@ -264,20 +276,18 @@ function extendDeep(target) {
  * Returns the status text string for AJAX requests.
  */
 function getAjaxErrorStatus(xhr) {
-	return xhr.statusText.replace(xhr.status + ' ', '');
+	return xhr.readyState ? xhr.statusText.replace(xhr.status + ' ', '') : '';
 }
 
 /** 
- * Returns a function that calls the function with the passed in name on each element in a NodeCollection unless
- * the callback returns true, in which case the result of calling the function on the first element is returned.
+ * Returns a function that calls the passed in function on each element in a NodeCollection unless the callback
+ * returns true, in which case the result of calling the function on the first element is returned.
  * 
  * @private
- * @param {String} fn - The name of a function in HTMLElement's prototype.
+ * @param {Function} fn - The function to use as the getter or setter.
  * @param {Function} callback(numArgs, firstArg) - Function to determine if the value of the first element should be returned.
  */
 function getFirstSetEachElement(fn, callback) {
-	fn = HTMLElementPrototype[fn];
-
 	return function(firstArg) {
 		var items = this,
 			len = items.length,
@@ -303,32 +313,32 @@ function getFirstSetEachElement(fn, callback) {
 }
 
 /*
- * Returns a function that creates a set of elements in a certain direction around a given node (i.e. parents, children, siblings).
+ * Returns a function that creates a set of elements in a certain direction around
+ * a given node (i.e. parents, children, siblings, find -> all descendants).
  * 
- * @param {String} funcName - The name of a function that retrieves elements for a single node.
- * @param {Function|?} sorter - A function used to sort the union of multiple sets of returned elements.
+ * @param {Function|String} direction - A function or name of a function that retrieves elements for a single node.
+ * @param {Function|Number} [sorter] - A function used to sort the union of multiple sets of returned elements.
  * If sorter == 0, return an 'until' Node function.
  */
 function getGetDirElementsFunc(direction, sorter) {
-	//For NodeCollection.prototype
 	if (sorter) {
-		return function(arg1, arg2) {
+		//For NodeCollection.prototype
+		return function() {
 			var len = this.length;
 
 			//Simple and speedy for one node
 			if (len === 1) {
-				return this[0][direction](arg1, arg2);
+				return direction.apply(this[0], arguments);
 			}
 
 			//Build a list of NodeCollections
 			var collections = [],
 				i = 0;
 			for (; i &lt; len; i++) {
-				collections.push(this[i][direction](arg1, arg2));
+				collections.push(direction.apply(this[i], arguments));
 			}
 
-			//Union the collections so that the resulting collection contains unique elements
-			//and return the sorted result
+			//Union the collections so that the resulting collection contains unique elements and return the sorted result
 			return ArrayPrototype.union.apply(NodeCollectionPrototype, collections).sort(sorter);
 		};
 	}
@@ -350,22 +360,30 @@ function getGetDirElementsFunc(direction, sorter) {
 						: function() { //Match by Node (or if `until.length === 0`, this will always be false)
 							return node == until;
 						};
+
+			// Traverse all nodes in the direction and add them (or if there is a selector the ones that match it) to the NodeCollection
+			// until the `stop()` function returns `true`
 			while ((node = node[direction]) &amp;&amp; !stop()) {
 				if (!filter || node.matches(filter)) {
 					nc.push(node);
 				}
 			}
+
 			return nc;
 		}
+
 		//nextAll, prevAll, parents
 		: function(selector) {
 			var nc = new NodeCollection(),
 				node = this;
+
+			//Traverse all nodes in the direction and add them (or if there is a selector the ones that match it) to the NodeCollection
 			while (node = node[direction]) {
 				if (!selector || node.matches(selector)) {
 					nc.push(node);
 				}
 			}
+
 			return nc;
 		};
 };
@@ -647,11 +665,16 @@ function typeofString(value) {
 }
 
 var
+	/* Browser/Engine detection */
+	usesWebkit = 'webkitAppearance' in document.documentElement.style,
+	usesGecko = window.mozInnerScreenX != null,
+	isIOS = /^iP/.test(navigator.platform), // iPhone, iPad, iPod
+
 	/*
 	 * Determines if an item is a Node.
 	 * Gecko's instanceof Node is faster (but might want to check if that's because it caches previous calls).
 	 */
-	isNode = window.mozInnerScreenX != null
+	isNode = usesGecko
 		? function(obj) {
 			return obj instanceof Node;
 		}
@@ -667,12 +690,12 @@ var
 	ElementPrototype = Element[prototype],
 	FunctionPrototype = Function[prototype],
 	HTMLElementPrototype = HTMLElement[prototype],
+	HTMLSelectElementPrototype = HTMLSelectElement[prototype],
 	NodePrototype = Node[prototype],
 	NodeListPrototype = NodeList[prototype],
 	HTMLCollectionPrototype = HTMLCollection[prototype],
 	StringPrototype = String[prototype],
 	defineProperty = Object.defineProperty,
-	defineProperties = Object.defineProperties,
 
 	//Helpers
 	slice = ArrayPrototype.slice,
@@ -689,16 +712,19 @@ var
 	rgxNoParse = /^\d+\D/, //Matches strings that look like numbers but have non-digit characters
 
 	/* Pre-built RegExps */
-	rgxTableLevel1 = /&lt;t(?:h|b|f)/i, //Detects (non-deprected) first-level table elements: &lt;thead>, &lt;tbody>, &lt;tfoot>
+	rgxTableLevel1 = /&lt;t(?:h|b|f)/i, //Detects (non-deprecated) first-level table elements: &lt;thead>, &lt;tbody>, &lt;tfoot>
 	rgxGetOrHead = /GET|HEAD/i, //Determines if a request is a GET or HEAD request
 	rgxDomain = /\/?\/\/(?:\w+\.)?(.*?)(?:\/|$)/,
 	rgxDifferentNL = /^(?:af|ap|be|ea|ins|prep|pu|rep|tog)|wrap|remove(?:Class)?$/, //Determines if the function is different for NodeLists
-	rgxNotId = /[ .,>:[+~\t-\f]/, //Matches other characters that cannot be in an id selector
+	rgxNotId = /[ .,>:[+~\t-\f]/,    //Matches other characters that cannot be in an id selector
 	rgxNotClass = /[ #,>:[+~\t-\f]/, //Matches other characters that cannot be in a class selector
 	rgxAllDots = /\./g,
 	rgxNotTag = /[^A-Za-z]/,
 	rgxNonWhitespace = /\S+/g,
 	rgxSpaceChars = /[ \t-\f]+/, //From W3C http://www.w3.org/TR/html5/single-page.html#space-character
+	rgxFormButton = /button|file|reset|submit/, //Matches input element types that are buttons
+	rgxCheckableElement = /checkbox|radio/,     //Matches checkbox or radio input element types
+	rgxCamelizables = usesGecko ? /-+(.)/g : /^-+|-+(.)/g, //Matches dashed parts of CSS property names
 
 	/* AJAX */
 	timestamp = Date.now(),
@@ -727,8 +753,8 @@ var
 		xhr: XMLHttpRequest
 	},
 
+	/* Misc */
 	_$ = window.$, //Save the `$` variable in case something else is currently using it
-
 	any, //Arbitrary variable that may be used for whatever -- keep no references so this can be garbage collected
 
 //#endregion Private
@@ -743,7 +769,7 @@ var
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array|Array - JavaScript | MDN}
  */
 
-arrayExtensions = {
+prototypeExtensions = {
 	/* Private reference to the constructor */
 	__C__: Array,
 
@@ -799,6 +825,20 @@ arrayExtensions = {
 	 */
 	contains: function(e) {
 		return this.indexOf(e) >= 0;
+	},
+
+	/**
+	 * Returns a new array with all of the values of this array that are not in any of the input arrays (performs a set difference).
+	 * 
+	 * __Note:__ The input arrays can be array-like objects (like a function's `arguments` object).
+	 * 
+	 * @function Array.prototype.diff
+	 * @param {...Array} arrays - One or more array-like objects.
+	 * @returns {Array}
+	 */
+	diff: function(array, others) {
+		//The union can be applied to the Array prototype because it is basically the same thing as an empty array
+		return this.without.apply(this, others ? array.union.apply(ArrayPrototype, arguments) : array);
 	},
 
 	/**
@@ -908,7 +948,7 @@ arrayExtensions = {
 	 * [1, 2, 3].union([2, 3, 4, 5]);  // returns [1, 2, 3, 4, 5]
 	 */
 	union: function() {
-		var union = this.unique(),
+		var union = this.uniq(),
 			i = 0,
 			array,
 			j;
@@ -926,19 +966,33 @@ arrayExtensions = {
 	/**
 	 * Returns a duplicate-free clone of the array.
 	 * 
-	 * @function Array.prototype.unique
-	 * @returns {Array} An array of unique items.
 	 * @example
-	 * [1, 2, 3, 2, 1].unique();  // returns [1, 2, 3]
+	 * // Unsorted
+	 * [1, 2, 3, 2, 1, 4].uniq();      // returns [1, 2, 3, 4]
+	 * // Sorted
+	 * [1, 2, 2, 3, 4, 4].uniq();      // returns [1, 2, 3, 4]
+	 * [1, 2, 2, 3, 4, 4].uniq(true);  // returns [1, 2, 3, 4] but faster than on the previous line
+	 * 
+	 * @function Array.prototype.uniq
+	 * @param {Boolean} [isSorted=false] - If the input array's contents are sorted and this is set to `true`,
+	 * a faster algorithm will be used to create the unique array.
+	 * @returns {Array}
 	 */
-	unique: function() {
+	uniq: function(isSorted) {
 		var uniq = new this.__C__(),
 			i = 0;
+
 		for (; i &lt; this.length; i++) {
-			if (uniq.indexOf(this[i]) &lt; 0) {
+			if (isSorted) {
+				if (this[i] !== this[i + 1]) {
+					uniq.push(this[i]);
+				}
+			}
+			else if (uniq.indexOf(this[i]) &lt; 0) {
 				uniq.push(this[i]);
 			}
 		}
+
 		return uniq;
 	},
 
@@ -951,11 +1005,23 @@ arrayExtensions = {
 	 * @example
 	 * [1, 2, 3, 4, 5, 6].without(3, 4, 6);  // returns [1, 2, 5]
 	 */
-	without: function() {
-		var array = new this.__C__(),
-			i = 0,
-			j;
-		skip:
+	without: isIOS
+		//Special, faster function for iOS (http://jsperf.com/arrwout), which also helps make Array#diff faster
+		? function() {
+			var array = new this.__C__(),
+				i = 0;
+			for (; i &lt; this.length; i++) {
+				if (ArrayPrototype.indexOf.call(arguments, this[i]) &lt; 0) {
+					array.push(this[i]);
+				}
+			}
+			return array;
+		}
+		: function() {
+			var array = new this.__C__(),
+				i = 0,
+				j;
+			skip:
 			for (; i &lt; this.length; i++) {
 				for (j = 0; j &lt; arguments.length; j++) {
 					if (this[i] === arguments[j]) {
@@ -964,16 +1030,12 @@ arrayExtensions = {
 				}
 				array.push(this[i]);
 			}
-		return array;
-	}
+			return array;
+		}
 };
 
-//Define the properties on Array.prototype with Object.defineProperty
-for (any in arrayExtensions) {
-	defineProperty(ArrayPrototype, any, {
-		value: arrayExtensions[any]
-	});
-}
+//Define the properties on Array.prototype
+definePrototypeExtensionsOn(ArrayPrototype);
 
 //#endregion Array
 
@@ -1048,6 +1110,44 @@ ElementPrototype.$QS = ElementPrototype.$1 = ElementPrototype.querySelector;
 ElementPrototype.$QSA = ElementPrototype.$ = ElementPrototype.querySelectorAll;
 
 /**
+ * Gets the value of the element's specified attribute.
+ * 
+ * @function Element.prototype.attr
+ * @param {String} attribute - The name of the attribute who's value you want to get.
+ * @returns {String} The value of the attribute.
+ */
+/**
+ * Sets the element's specified attribute.
+ * 
+ * @function Element.prototype.attr
+ * @param {String} attribute - The name of the attribute who's value should be set.
+ * @param {String} value - The value to set the specified attribute to.
+ */
+/**
+ * Sets the specified attributes of the element.
+ * 
+ * @function Element.prototype.attr
+ * @param {Object} attributes - An object of attribute-value pairs to set.
+ */
+ElementPrototype.attr = function(attrib, value) {
+	if (isUndefined(value)) {
+		if (typeofString(attrib)) {
+			return this.getAttribute(attrib); //Get
+		}
+
+		//Reuse the value parameter since it is undefined
+		for (value in attrib) {
+			this.setAttribute(value, attrib[value]); //Set multiple
+		}
+	}
+	else {
+		this.setAttribute(attrib, value); //Set single
+	}
+
+	return this;
+};
+
+/**
  * Gets the element's stored data object.
  * 
  * @function Element.prototype.data
@@ -1078,6 +1178,26 @@ ElementPrototype.data = function(key, value) {
 };
 
 /**
+ * Gets the descendants of the element, filtered by a selector, collection of elements, or a single element.
+ * 
+ * __Protip:__ Since this method has multiple input types, type-checking is performed on the input to determine how the result will be calculated.
+ * If want to find descendant elements using a CSS selector, you should use the native `element.querySelectorAll()` or a Firebolt alias for
+ * that function (`.$QSA()` or `.$()`).
+ * 
+ * @function Element.prototype.find
+ * @param {String|Element|Element[]} selector - A CSS selector, a collection of elements, or a single element used to match descendant elements against.
+ * @returns {NodeList|NodeCollection}
+ */
+ElementPrototype.find = function(selector) {
+	if (typeofString(selector)) {
+		return this.$(selector);
+	}
+
+	//Return the intersection of all of the element's descendants with the elements in the input collection or single element (in an array)
+	return this.$('*').intersect(selector.nodeType ? [selector] : selector);
+};
+
+/**
  * Determines if the element matches the specified CSS selector.
  * 
  * @function Element.prototype.matches
@@ -1085,6 +1205,52 @@ ElementPrototype.data = function(key, value) {
  * @returns {Boolean} `true` if the element matches the selector; else `false`.
  */
 ElementPrototype.matches = ElementPrototype.matches || ElementPrototype.webkitMatchesSelector || ElementPrototype.mozMatchesSelector || ElementPrototype.msMatchesSelector || ElementPrototype.oMatchesSelector;
+
+/**
+ * Gets the value of the element's specified property.
+ * 
+ * @function Element.prototype.prop
+ * @param {String} property - The name of the property who's value you want to get.
+ * @returns {?} The value of the property being retrieved.
+ */
+/**
+ * Sets the specified property of the element.
+ * 
+ * @function Element.prototype.prop
+ * @param {String} property - The name of the property to be set.
+ * @param {*} value - The value to set the property to.
+ */
+/**
+ * Sets the specified properties of the element.
+ * 
+ * @function Element.prototype.prop
+ * @param {Object} properties - An object of property-value pairs to set.
+ */
+ElementPrototype.prop = function(prop, value) {
+	if (isUndefined(value)) {
+		if (typeofString(prop)) {
+			return this[prop]; //Get
+		}
+		extend(this, prop); //Set multiple
+	}
+	else {
+		this[prop] = value; //Set single
+	}
+
+	return this;
+};
+
+/**
+ * Removes the specified attribute from the element.
+ * 
+ * @function Element.prototype.removeAttr
+ * @param {String} attribute - The name of the attribute to remove.
+ */
+ElementPrototype.removeAttr = function(attribute) {
+	this.removeAttribute(attribute);
+
+	return this;
+};
 
 /**
  * Removes a previously stored piece of Firebolt data.  
@@ -1102,6 +1268,18 @@ ElementPrototype.matches = ElementPrototype.matches || ElementPrototype.webkitMa
  */
 ElementPrototype.removeData = function(input) {
 	return removeData(this, input);
+};
+
+/**
+ * Removes the specified property from the element.
+ * 
+ * @function Element.prototype.removeProp
+ * @param {String} propertyName - The name of the property to remove.
+ */
+ElementPrototype.removeProp = function(propertyName) {
+	delete this[propertyName];
+
+	return this;
 };
 
 //#endregion Element
@@ -1135,7 +1313,7 @@ ElementPrototype.removeData = function(input) {
  * @example
  * $('button.btn-success'); // Returns all button elements with the class "btn-success"
  * $('str &lt;p>content&lt;/p>'); // Creates a set of nodes and returns it as a NodeList (in this case ["str ", &lt;p>content&lt;/p>])
- * $.create('div');         // Calls Firebolt's `create()` method to create a new div element 
+ * $.elem('div');         // Calls Firebolt's method to create a new div element 
  */
 function Firebolt(str, context) {
 	if (context) {
@@ -1568,17 +1746,6 @@ Firebolt.ajaxSetup = function(options) {
 }
 
 /**
- * Creates a new element with the specified tag name and attributes (optional).  
- * Partially an alias of `document.createElement()`.
- * 
- * @function Firebolt.create
- * @param {String} tagName
- * @param {Object} [attributes] - The JSON-formatted attributes that the element should have once constructed.
- * @returns {Element}
- */
-Firebolt.create = createElement;
-
-/**
  * Gets the object's stored data object.
  * 
  * @param {Object} object - An object. This can be anything that has Object in its prototype chain.
@@ -1650,6 +1817,17 @@ Firebolt.each = function(obj, callback) {
 	}
 	return obj;
 };
+
+/**
+ * Creates a new element with the specified tag name and attributes (optional).  
+ * Partially an alias of `document.createElement()`.
+ * 
+ * @function Firebolt.elem
+ * @param {String} tagName
+ * @param {Object} [attributes] - The JSON-formatted attributes that the element should have once constructed.
+ * @returns {Element}
+ */
+Firebolt.elem = createElement;
 
 /**
  * Extend the "Firebolt object" (a.k.a. NodeCollection, NodeList, and HTMLCollection).
@@ -1760,28 +1938,6 @@ Firebolt.globalEval = function(code) {
  */
 Firebolt.hasData = function(object) {
 	return !isEmptyObject(object[DATA_KEY_PUBLIC]);
-};
-
-/**
- * HTML-decodes the passed in string and returns the result.
- * 
- * @param {String} string - The string to decode.
- * @returns {String} The HTML-decoded text.
- * @memberOf Firebolt
- */
-Firebolt.htmlDecode = function(str) {
-	return createElement('div').html(str).text();
-};
-
-/**
- * HTML-encodes the passed in string and returns the result.
- * 
- * @param {String} string - The string to encode.
- * @returns {String} The HTML-encoded text.
- * @memberOf Firebolt
- */
-Firebolt.htmlEncode = function(str) {
-	return createElement('div').text(str).html();
 };
 
 /**
@@ -2063,6 +2219,19 @@ window.$ = window.FB = window.Firebolt = Firebolt;
 Firebolt._GET(); // Just call the function to update the global $_GET object
 
 /**
+ * Returns the first element within the document with the specified ID. Can also be called by the alias `$ID()`.  
+ * Alias of `document.getElementById()`.
+ * 
+ * @global
+ * @function $$
+ * @param {String} id - A case-sensitive string representing the unique ID of the element being sought.
+ * @returns {?Element} The element with the specified ID or `null` if there is no such element in the document.
+ */
+window.$$ = window.$ID = function(id) {
+	return document.getElementById(id);
+};
+
+/**
  * Returns the first element within the document that matches the specified CSS selector.
  * If no element matches the selector, `null` or `undefined` may be returned.  
  * Alias of `document.querySelector()`, but with optimizations if a single class name, id, or tag name is input as the selector.
@@ -2102,16 +2271,14 @@ window.$CLS = function(className) {
 };
 
 /**
- * Returns the first element within the document with the specified id.  
+ * Returns the first element within the document with the specified ID. Can also be called by the alias `$$()`.  
  * Alias of `document.getElementById()`.
  * 
  * @global
- * @param {String} id
- * @returns {?Element} The element with the specified id.
+ * @function $ID
+ * @param {String} id - A case-sensitive string representing the unique ID of the element being sought.
+ * @returns {?Element} The element with the specified ID or `null` if there is no such element in the document.
  */
-window.$ID = function(id) {
-	return document.getElementById(id);
-};
 
 /**
  * Returns a list of the elements within the document with the specified name attribute.  
@@ -2274,42 +2441,6 @@ HTMLElementPrototype.appendWith = function() {
 	return this;
 }
 
-/**
- * Gets the value of the element's specified attribute.
- * 
- * @function HTMLElement.prototype.attr
- * @param {String} attribute - The name of the attribute who's value you want to get.
- * @returns {String} The value of the attribute.
- */
-/**
- * Sets the element's specified attribute.
- * 
- * @function HTMLElement.prototype.attr
- * @param {String} attribute - The name of the attribute who's value should be set.
- * @param {String} value - The value to set the specified attribute to.
- */
-/**
- * Sets the specified attributes of the element.
- * 
- * @function HTMLElement.prototype.attr
- * @param {Object} attributes - An object of attribute-value pairs to set.
- */
-HTMLElementPrototype.attr = function(attrib, value) {
-	if (isUndefined(value)) {
-		if (typeofString(attrib)) {
-			return this.getAttribute(attrib); //Get
-		}
-		for (var attribute in attrib) {
-			this.setAttribute(attribute, attrib[attribute]); //Set multiple
-		}
-	}
-	else {
-		this.setAttribute(attrib, value); //Set single
-	}
-
-	return this;
-};
-
 /*
  * More performant version of Node#beforePut for HTMLElements.
  * @see Node#beforePut
@@ -2348,12 +2479,20 @@ HTMLElementPrototype.beforePut = function() {
 /**
  * Sets the element's specified style property.
  * 
+ * __Note:__ If the passed in value is a number, it will be converted to a string and `'px'` will be appended
+ * to it prior to setting the CSS value.
+ * 
  * @function HTMLElement.prototype.css
  * @param {String} propertyName - The name of the style property to set.
  * @param {String|Number} value - A value to set for the specified property.
  */
 /**
  * Sets CSS style properties.
+ * 
+ * __Note:__ Unlike the previous version of this function that is used as a setter, the input style property names
+ * are assumed to already be in camel-case format (since this is an illegal object anyway: `{font-size: '12px'}`).
+ * Also, just like the previous function, if a value in the object is a number, it will be converted to a string
+ * and `'px'` will be appended to it prior to setting the CSS value.
  * 
  * @function HTMLElement.prototype.css
  * @param {Object.&lt;String, String|Number>} properties - An object of CSS property-values.
@@ -2362,7 +2501,7 @@ HTMLElementPrototype.beforePut = function() {
  * Explicitly sets the element's inline CSS style, removing or replacing any current inline style properties.
  * 
  * @function HTMLElement.prototype.css
- * @param {String} cssText - A CSS style string. To clear the style, pass in an empty string.
+ * @param {String} cssText - A CSS style string. To clear the element's inline style, pass in an empty string.
  */
 HTMLElementPrototype.css = function(prop, value) {
 	if (isUndefined(prop)) {
@@ -2371,21 +2510,24 @@ HTMLElementPrototype.css = function(prop, value) {
 
 	if (typeofString(prop)) {
 		if (isUndefined(value)) {
-			if (prop &amp;&amp; !prop.contains(':')) {
+			if (prop &amp;&amp; prop.indexOf(':') &lt; 0) {
 				//Get the specified property
-				return getComputedStyle(this)[prop];
+				return getComputedStyle(this)[prop.camelize()];
 			}
 			//Else set the element's css text
 			this.style.cssText = prop;
 		}
 		else {
 			//Set the specified property
-			this.style[prop] = value;
+			this.style[prop.camelize()] = typeofString(value) ? value : value + 'px';
 		}
 	}
 	else {
 		//Set all specifed properties
-		extend(this.style, prop);
+		for (var propName in prop) {
+			value = prop[propName];
+			this.style[propName] = typeofString(value) ? value : value + 'px';
+		}
 	}
 
 	return this;
@@ -2409,7 +2551,7 @@ HTMLElementPrototype.css = function(prop, value) {
  * &lt;div id="mydiv">&lt;/div>
  */
 HTMLElementPrototype.empty = function() {
-	for (var i = 0, len = this.childNodes.length; i &lt; len; i++) {
+	while (this.firstChild) {
 		this.removeChild(this.firstChild);
 	}
 
@@ -2463,28 +2605,52 @@ HTMLElementPrototype.html = function(innerHTML) {
  * Gets the element's current coordinates relative to the document.
  * 
  * @function HTMLElement.prototype.offset
- * @returns {{top: Number, left: Number}} An object containing the coordinates detailing the element's distance from the top and left of the screen.
+ * @returns {{top: Number, left: Number}} An object containing the coordinates detailing the element's distance from the top and left of the document.
  * @example
- * // HTML
  * &lt;body style="margin: 0">
- *   &lt;div id='a' style="position: absolute; margin: 10px; left: 10px">&lt;/div>
+ *   &lt;div id="mydiv" style="position: absolute; margin: 10px; left: 10px">&lt;/div>
  * &lt;/body>
  * 
- * // JavaScript
- * var offset = $ID('a').offset();
- * alert( offset.top + ', ' + offset.left );  // "10, 20"
+ * &lt;script>
+ * $$('mydiv').offset();  // -> Object {top: 10, left: 20}
+ * &lt;/script>
  */
-HTMLElementPrototype.offset = function() {
+/**
+ * Sets the element's coordinates relative to the document.
+ * 
+ * @function HTMLElement.prototype.offset
+ * @param {{top: Number, left: Number}} coordinates - An object containing the properties `top` and `left`,
+ * which are numbers indicating the new top and left coordinates for the element.
+ */
+HTMLElementPrototype.offset = function(coordinates) {
 	var el = this,
-		offset = {
-			top: 0,
-			left: 0
-		};
+		top = 0,
+		left = 0;
+
+	if (coordinates) {
+		//If the element's position is absolute or fixed, the coordinates can be directly set
+		var position = this.css('position');
+		if (position[0] === 'a' || position[0] === 'f') {
+			return this.css({top: coordinates.top, left: coordinates.left});
+		}
+
+		//Otherwise, reset the element's top and left values so relative coordinates can be calculated
+		this.css({top: 0, left: 0});
+	}
+
+	//Calculate the element's current offset
 	do {
-		offset.top += el.offsetTop + el.clientTop;
-		offset.left += el.offsetLeft + el.clientLeft;
+		top += el.offsetTop;
+		left += el.offsetLeft;
 	} while (el = el.offsetParent)
-	return offset;
+
+	//Set the element's coordinates with relative positioning or return the calculated coordinates
+	return coordinates ? this.css({
+			position: 'relative',
+			top: 0 - top + coordinates.top,
+			left: 0 - left + coordinates.left
+		})
+		: {top: top, left: left};
 };
 
 /*
@@ -2508,52 +2674,6 @@ HTMLElementPrototype.prependWith = function() {
 
 	return this;
 }
-
-/**
- * Gets the value of the element's specified property.
- * 
- * @function HTMLElement.prototype.prop
- * @param {String} property - The name of the property who's value you want to get.
- * @returns {?} The value of the property being retrieved.
- */
-/**
- * Sets the specified property of the element.
- * 
- * @function HTMLElement.prototype.prop
- * @param {String} property - The name of the property to be set.
- * @param {*} value - The value to set the property to.
- */
-/**
- * Sets the specified properties of the element.
- * 
- * @function HTMLElement.prototype.prop
- * @param {Object} properties - An object of property-value pairs to set.
- */
-HTMLElementPrototype.prop = function(prop, value) {
-	if (isUndefined(value)) {
-		if (typeofString(prop)) {
-			return this[prop]; //Get
-		}
-		extend(this, prop); //Set multiple
-	}
-	else {
-		this[prop] = value; //Set single
-	}
-
-	return this;
-};
-
-/**
- * Removes the specified attribute from the element.
- * 
- * @function HTMLElement.prototype.removeAttr
- * @param {String} attribute - The name of the attribute to remove.
- */
-HTMLElementPrototype.removeAttr = function(attribute) {
-	this.removeAttribute(attribute);
-
-	return this;
-};
 
 /**
  * @summary Removes the specified class(es) or all classes from the element.
@@ -2581,15 +2701,38 @@ HTMLElementPrototype.removeClass = function(value) {
 };
 
 /**
- * Removes the specified property from the element.
+ * Encode a form element or form control element as a string for submission in an HTTP request.
  * 
- * @function HTMLElement.prototype.removeProp
- * @param {String} propertyName - The name of the property to remove.
+ * __Note:__ Unlike jQuery, successful `&lt;select>` controls that have the `multiple` attribute will be encoded
+ * using {@linkcode Firebolt.param|Firebolt.param()} with the `traditional` parameter set to `false`, so its
+ * array value will be preserved in the encoded string.
+ * 
+ * @function HTMLElement.prototype.serialize
+ * @returns {String} A URL-encoded string of the form element's value or an empty string if the element is
+ * not a [successful control](http://www.w3.org/TR/html401/interact/forms.html#h-17.13.2).
+ * @this HTMLFormElement|HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement
  */
-HTMLElementPrototype.removeProp = function(propertyName) {
-	delete this[propertyName];
+HTMLElementPrototype.serialize = function() {
+	var type = this.type,
+		name = this.name,
+		value = this.val();
 
-	return this;
+	if (!name                                                 // Doesn't have a name
+		|| this.disabled                                      // Is disabled
+		|| value == null                                      // Is a &lt;select> element and has no value or is not a form control
+		|| rgxFormButton.test(type)                           // Is a form button (button|file|reset|submit)
+		|| rgxCheckableElement.test(type) &amp;&amp; !this.checked) { // Is a checkbox or radio button and is not checked
+		return '';
+	}
+
+	//Check if the value is a string because &lt;select> elements may return an array of selected options
+	return typeofString(value) ? encodeURIComponent(name) + '=' + encodeURIComponent(value)
+							   : serializeRecursive( HTMLElementPrototype.prop.call({}, name, value) );
+};
+
+/* For form elements, return the serialization of its form controls */
+HTMLFormElement[prototype].serialize = function() {
+	return this.elements.serialize();
 };
 
 /**
@@ -2701,7 +2844,7 @@ HTMLElementPrototype.val = function(value) {
 	return this;
 };
 
-HTMLSelectElement[prototype].val = function(value) {
+HTMLSelectElementPrototype.val = function(value) {
 	var multiple = this.multiple,
 		options = this.options,
 		i = 0;
@@ -2980,7 +3123,7 @@ NodePrototype.replaceAll = getNodeInsertingFunction(replaceWith);
  * Replace the node with some other content.
  * 
  * @function Node.prototype.replaceWith
- * @param {..(String|Node|NodeCollection)} content - A specific node, a collection of nodes, or some HTML to replace the subject node.
+ * @param {...(String|Node|NodeCollection)} content - A specific node, a collection of nodes, or some HTML to replace the subject node.
  * @throws {TypeError} The subject node must have a {@link https://developer.mozilla.org/en-US/docs/Web/API/Node.parentNode|ParentNode}.
  */
 NodePrototype.replaceWith = function() {
@@ -3097,7 +3240,7 @@ NodePrototype.wrapInner = function(wrappingElement) {
 //#region ======================== NodeCollection ============================
 
 //Save the clone function to toNC to be a way to make shallow copies of the NodeCollection/NodeList/HTMLCollection
-arrayExtensions.toNC = arrayExtensions.clone;
+prototypeExtensions.toNC = prototypeExtensions.clone;
 
 /**
  * Create a deep copy of the collection of nodes.
@@ -3109,7 +3252,7 @@ arrayExtensions.toNC = arrayExtensions.clone;
  * @param {Boolean} [withData=false] - A boolean indicating if the element's data should be copied as well.
  * @returns {NodeCollection}
  */
-arrayExtensions.clone = function(withData) {
+prototypeExtensions.clone = function(withData) {
 	return this.map(function(node) {
 		var clone = node.cloneNode(true);
 		if (withData &amp;&amp; node[DATA_KEY_PUBLIC]) {
@@ -3149,7 +3292,7 @@ var
 	NodeCollection = window.NodeCollection = document.head.appendChild(any = createElement('iframe')).contentWindow.Array,
 
 	//Extend NodeCollection's prototype with the Array functions
-	NodeCollectionPrototype = extend(NodeCollection[prototype], arrayExtensions),
+	NodeCollectionPrototype = extend(NodeCollection[prototype], prototypeExtensions),
 
 	//Save a reference to the original filter function for use later on
 	ncFilter = NodeCollectionPrototype.filter;
@@ -3222,7 +3365,7 @@ NodeCollectionPrototype.add = function(input) {
  * @function NodeCollection.prototype.addClass
  * @param {String} className - The class to be added to each element in the collection.
  */
-NodeCollectionPrototype.addClass = callOnEachElement('addClass');
+NodeCollectionPrototype.addClass = callOnEachElement(HTMLElementPrototype.addClass);
 
 /**
  * Alias of {@link NodeCollection#afterPut} provided for similarity with jQuery.
@@ -3324,7 +3467,7 @@ NodeCollectionPrototype.appendWith = NodeCollectionPrototype.append = function()
  * @function NodeCollection.prototype.attr
  * @param {Object} attributes - An object of attribute-value pairs to set.
  */
-NodeCollectionPrototype.attr = getFirstSetEachElement('attr', function(numArgs) {
+NodeCollectionPrototype.attr = getFirstSetEachElement(HTMLElementPrototype.attr, function(numArgs) {
 	return numArgs &lt; 2;
 });
 
@@ -3371,7 +3514,7 @@ NodeCollectionPrototype.beforePut = NodeCollectionPrototype.before = function() 
  * @param {String} [selector] - A CSS selector used to filter the returned set of elements.
  * @returns {NodeCollection} The set of children, sorted in document order.
  */
-NodeCollectionPrototype.children = getGetDirElementsFunc('childElements', sortDocOrder);
+NodeCollectionPrototype.children = getGetDirElementsFunc(HTMLElementPrototype.childElements, sortDocOrder);
 
 /**
  * Returns a clone of the collection with all non-elements removed.
@@ -3385,11 +3528,11 @@ NodeCollectionPrototype.clean = function() {
 }
 
 /**
- * Clicks each element in the list.
+ * Clicks each element in the collection.
  * 
  * @function NodeCollection.prototype.click
  */
-NodeCollectionPrototype.click = callOnEachElement('click');
+NodeCollectionPrototype.click = callOnEachElement(HTMLElementPrototype.click);
 
 /**
  * Gets the computed style object of the first element in the list.
@@ -3407,12 +3550,20 @@ NodeCollectionPrototype.click = callOnEachElement('click');
 /**
  * Sets the specified style property for each element in the list.
  * 
+ * __Note:__ If the passed in value is number, it will be converted to a string and `'px'` will be appended
+ * to it prior to setting the CSS value.
+ * 
  * @function NodeCollection.prototype.css
  * @param {String} propertyName - The name of the style property to set.
  * @param {String|Number} value - A value to set for the specified property.
  */
 /**
  * Sets CSS style properties for each element in the list.
+ * 
+ * __Note:__ Unlike the previous version of this function that is used as a setter, the input style property names
+ * are assumed to already be in camel-case format (since this is an illegal object anyway: `{font-size: '12px'}`).
+ * Also, just like the previous function, if a value in the object is a number, it will be converted to a string
+ * and `'px'` will be appended to it prior to setting the CSS value.
  * 
  * @function NodeCollection.prototype.css
  * @param {Object.&lt;String, String|Number>} properties - An object of CSS property-values.
@@ -3421,9 +3572,9 @@ NodeCollectionPrototype.click = callOnEachElement('click');
  * Explicitly sets each elements' inline CSS style, removing or replacing any current inline style properties.
  * 
  * @function NodeCollection.prototype.css
- * @param {String} cssText - A CSS style string. To clear the style, pass in an empty string.
+ * @param {String} cssText - A CSS style string. To clear each element's inline style, pass in an empty string.
  */
-NodeCollectionPrototype.css = getFirstSetEachElement('css', function(numArgs, firstArg) {
+NodeCollectionPrototype.css = getFirstSetEachElement(HTMLElementPrototype.css, function(numArgs, firstArg) {
 	return !numArgs || numArgs &lt; 2 &amp;&amp; firstArg &amp;&amp; typeofString(firstArg) &amp;&amp; !firstArg.contains(':');
 });
 
@@ -3453,7 +3604,7 @@ NodeCollectionPrototype.css = getFirstSetEachElement('css', function(numArgs, fi
  * @function NodeCollection.prototype.data
  * @param {Object} obj - An object of key-value pairs to add to each elements stored data.
  */
-NodeCollectionPrototype.data = getFirstSetEachElement('data', function(numArgs, firstArg) {
+NodeCollectionPrototype.data = getFirstSetEachElement(ElementPrototype.data, function(numArgs, firstArg) {
 	return !numArgs || numArgs &lt; 2 &amp;&amp; typeofString(firstArg);
 });
 
@@ -3462,7 +3613,7 @@ NodeCollectionPrototype.data = getFirstSetEachElement('data', function(numArgs, 
  * 
  * @function NodeCollection.prototype.empty
  */
-NodeCollectionPrototype.empty = callOnEachElement('empty');
+NodeCollectionPrototype.empty = callOnEachElement(HTMLElementPrototype.empty);
 
 /**
  * Creates a new NodeCollection containing only the elements that match the provided selector.
@@ -3490,12 +3641,21 @@ NodeCollectionPrototype.filter = function(selector) {
 };
 
 /**
+ * Gets the descendants of each element in the collection, filtered by a selector, collection of elements, or a single element.
+ * 
+ * @function NodeCollection.prototype.find
+ * @param {String|Element|Element[]} selector - A CSS selector, a collection of elements, or a single element used to match descendant elements against.
+ * @returns {NodeList|NodeCollection}
+ */
+NodeCollectionPrototype.find = getGetDirElementsFunc(ElementPrototype.find, sortDocOrder);
+
+/**
  * Hides each element in the collection.
  * 
  * @function NodeCollection.prototype.hide
  * @see HTMLElement#hide
  */
-NodeCollectionPrototype.hide = callOnEachElement('hide');
+NodeCollectionPrototype.hide = callOnEachElement(HTMLElementPrototype.hide);
 
 /**
  * Gets the inner HTML of the first element in the list.
@@ -3509,7 +3669,7 @@ NodeCollectionPrototype.hide = callOnEachElement('hide');
  * @function NodeCollection.prototype.html
  * @param {String} innerHTML - An HTML string.
  */
-NodeCollectionPrototype.html = getFirstSetEachElement('html', function(numArgs) {
+NodeCollectionPrototype.html = getFirstSetEachElement(HTMLElementPrototype.html, function(numArgs) {
 	return !numArgs;
 });
 
@@ -3555,7 +3715,7 @@ NodeCollectionPrototype.next = getNextOrPrevFunc(nextElementSibling);
  * @param {String} [selector] - A CSS selector used to filter the returned set of elements.
  * @returns {NodeCollection} The set of following sibling elements in order beginning with the closest sibling.
  */
-NodeCollectionPrototype.nextAll = getGetDirElementsFunc('nextAll', sortDocOrder);
+NodeCollectionPrototype.nextAll = getGetDirElementsFunc(HTMLElementPrototype.nextAll, sortDocOrder);
 
 /**
  * Gets the following siblings of each node in the collection, up to but not including the elements matched by the selector,
@@ -3567,7 +3727,25 @@ NodeCollectionPrototype.nextAll = getGetDirElementsFunc('nextAll', sortDocOrder)
  * @param {String} [filter] - A CSS selector used to filter the returned set of elements.
  * @returns {NodeCollection} - The set of following sibling elements in order beginning with the closest sibling.
  */
-NodeCollectionPrototype.nextUntil = getGetDirElementsFunc('nextUntil', sortDocOrder);
+NodeCollectionPrototype.nextUntil = getGetDirElementsFunc(HTMLElementPrototype.nextUntil, sortDocOrder);
+
+/**
+ * Gets the current coordinates of the first element in the collection relative to the document.
+ * 
+ * @function NodeCollection.prototype.offset
+ * @returns {{top: Number, left: Number}} An object containing the coordinates detailing the element's distance from the top and left of the document.
+ * @see HTMLElement#offset
+ */
+/**
+ * Sets the each element's coordinates relative to the document.
+ * 
+ * @function NodeCollection.prototype.offset
+ * @param {{top: Number, left: Number}} coordinates - An object containing the properties `top` and `left`,
+ * which are numbers indicating the new top and left coordinates to set for each element.
+ */
+NodeCollectionPrototype.offset = getFirstSetEachElement(HTMLElementPrototype.offset, function(numArgs) {
+	return !numArgs;
+});
 
 /**
  * Gets the parent of each node in the collection, optionally filtered by a selector.
@@ -3596,7 +3774,7 @@ NodeCollectionPrototype.parent = function(selector) {
  * @param {String} [selector] - A CSS selector used to filter the returned set of elements.
  * @returns {NodeCollection} - The set of ancestors, sorted in reverse document order.
  */
-NodeCollectionPrototype.parents = getGetDirElementsFunc('parents', sortRevDocOrder);
+NodeCollectionPrototype.parents = getGetDirElementsFunc(HTMLElementPrototype.parents, sortRevDocOrder);
 
 /**
  * Gets the ancestors of each node in the collection, up to but not including the elements matched by the selector,
@@ -3608,7 +3786,7 @@ NodeCollectionPrototype.parents = getGetDirElementsFunc('parents', sortRevDocOrd
  * @param {String} [filter] - A CSS selector used to filter the returned set of elements.
  * @returns {NodeCollection} - The set of ancestors, sorted in reverse document order.
  */
-NodeCollectionPrototype.parentsUntil = getGetDirElementsFunc('parentsUntil', sortRevDocOrder);
+NodeCollectionPrototype.parentsUntil = getGetDirElementsFunc(HTMLElementPrototype.parentsUntil, sortRevDocOrder);
 
 /**
  * Alias of {@link NodeCollection#prependWith} provided for similarity with jQuery.
@@ -3670,7 +3848,7 @@ NodeCollectionPrototype.prev = getNextOrPrevFunc(previousElementSibling);
  * @param {String} [selector] - A CSS selector used to filter the returned set of elements.
  * @returns {NodeCollection} The set of preceeding sibling elements in order beginning with the closest sibling.
  */
-NodeCollectionPrototype.prevAll = getGetDirElementsFunc('prevAll', sortRevDocOrder);
+NodeCollectionPrototype.prevAll = getGetDirElementsFunc(HTMLElementPrototype.prevAll, sortRevDocOrder);
 
 /**
  * Gets the preceeding siblings of each node in the collection, up to but not including the elements matched by the selector,
@@ -3682,7 +3860,7 @@ NodeCollectionPrototype.prevAll = getGetDirElementsFunc('prevAll', sortRevDocOrd
  * @param {String} [filter] - A CSS selector used to filter the returned set of elements.
  * @returns {NodeCollection} - The set of preceeding sibling elements in order beginning with the closest sibling.
  */
-NodeCollectionPrototype.prevUntil = getGetDirElementsFunc('prevUntil', sortRevDocOrder);
+NodeCollectionPrototype.prevUntil = getGetDirElementsFunc(HTMLElementPrototype.prevUntil, sortRevDocOrder);
 
 /**
  * Gets the value of the specified property of the first element in the list.
@@ -3704,7 +3882,7 @@ NodeCollectionPrototype.prevUntil = getGetDirElementsFunc('prevUntil', sortRevDo
  * @function NodeCollection.prototype.prop
  * @param {Object} properties - An object of property-value pairs to set.
  */
-NodeCollectionPrototype.prop = getFirstSetEachElement('prop', function(numArgs, firstArg) {
+NodeCollectionPrototype.prop = getFirstSetEachElement(HTMLElementPrototype.prop, function(numArgs, firstArg) {
 	return numArgs &lt; 2 &amp;&amp; typeofString(firstArg);
 });
 
@@ -3748,7 +3926,7 @@ NodeCollectionPrototype.remove = function(selector) {
  * @function NodeCollection.prototype.removeAttr
  * @param {String} attribute - The name of the attribute to be removed.
  */
-NodeCollectionPrototype.removeAttr = callOnEachElement('removeAttr');
+NodeCollectionPrototype.removeAttr = callOnEachElement(HTMLElementPrototype.removeAttr);
 
 /**
  * Removes the input class name from all elements in the list.
@@ -3756,7 +3934,7 @@ NodeCollectionPrototype.removeAttr = callOnEachElement('removeAttr');
  * @function NodeCollection.prototype.removeClass
  * @param {String} className - The class to be removed from each element in the collection.
  */
-NodeCollectionPrototype.removeClass = callOnEachElement('removeClass');
+NodeCollectionPrototype.removeClass = callOnEachElement(HTMLElementPrototype.removeClass);
 
 /**
  * Removes a previously stored piece of Firebolt data from each element.  
@@ -3772,7 +3950,7 @@ NodeCollectionPrototype.removeClass = callOnEachElement('removeClass');
  * @function NodeCollection.prototype.removeData
  * @param {Array|String} [list] - An array or space-separated string naming the pieces of data to remove.
  */
-NodeCollectionPrototype.removeData = callOnEachElement('removeData');
+NodeCollectionPrototype.removeData = callOnEachElement(HTMLElementPrototype.removeData);
 
 /**
  * Removes the specified property from each element in the list.
@@ -3780,7 +3958,7 @@ NodeCollectionPrototype.removeData = callOnEachElement('removeData');
  * @function NodeCollection.prototype.removeProp
  * @param {String} property - The name of the property to remove.
  */
-NodeCollectionPrototype.removeProp = callOnEachElement('removeProp');
+NodeCollectionPrototype.removeProp = callOnEachElement(HTMLElementPrototype.removeProp);
 
 /**
  * Replace the target with the nodes in this collection.
@@ -3819,12 +3997,41 @@ NodeCollectionPrototype.replaceWith = function() {
 };
 
 /**
+ * Encode a set of form elements or form control elements as a string for submission in an HTTP request.  
+ * Note that only [successful controls](http://www.w3.org/TR/html401/interact/forms.html#h-17.13.2) will
+ * have their values added to the serialized string. All button elements (including file input buttons)
+ * are also ignored.
+ * 
+ * __Protip:__ The best way to serialize a single form is to select the form element and  call `.serialize()`
+ * directly on it (see {@link HTMLElement#serialize}).
+ * 
+ * @function NodeCollection.prototype.serialize
+ * @returns {String} A URL-encoded string of the elements' serialized values or an empty string if no element could be successfully serialized.
+ * @throws {TypeError} Each element in the collection must be an HTMLElement.
+ * @see HTMLElement#serialize
+ * @see {@link http://api.jquery.com/serialize/|.serialize() | jQuery API Documentation}
+ */
+NodeCollectionPrototype.serialize = function() {
+	var retStr = '',
+		i = 0,
+		val;
+
+	for (; i &lt; this.length; i++) {
+		if (val = this[i].serialize()) {
+			retStr += (retStr ? '&amp;' : '') + val;
+		}
+	}
+
+	return retStr;
+};
+
+/**
  * Shows each element in the collection. For specifics, see {@link HTMLElement#show}.
  * 
  * @function NodeCollection.prototype.show
  * @see HTMLElement#show
  */
-NodeCollectionPrototype.show = callOnEachElement('show');
+NodeCollectionPrototype.show = callOnEachElement(HTMLElementPrototype.show);
 
 /**
  * Gets the sibling elements of each node in the collection, optionally filtered by a selector.
@@ -3834,7 +4041,7 @@ NodeCollectionPrototype.show = callOnEachElement('show');
  * @returns {NodeCollection} The set of siblings, sorted in document order.
  * @throws {TypeError} The target node(s) must have a {@link https://developer.mozilla.org/en-US/docs/Web/API/Node.parentNode|ParentNode}.
  */
-NodeCollectionPrototype.siblings = getGetDirElementsFunc('siblings', sortDocOrder);
+NodeCollectionPrototype.siblings = getGetDirElementsFunc(HTMLElementPrototype.siblings, sortDocOrder);
 
 /**
  * Gets the combined text contents of each node in the list.
@@ -3872,7 +4079,7 @@ NodeCollectionPrototype.text = function(text) {
  * @function NodeCollection.prototype.toggleClass
  * @param {String} className - The class to be toggled for each element in the collection.
  */
-NodeCollectionPrototype.toggleClass = callOnEachElement('toggleClass');
+NodeCollectionPrototype.toggleClass = callOnEachElement(HTMLElementPrototype.toggleClass);
 
 /**
  * Remove the each node's parent from the DOM, leaving the node in its place.
@@ -3917,9 +4124,19 @@ NodeCollectionPrototype.unwrap = function() {
  * @function NodeCollection.prototype.val
  * @param {String[]} values - The array of values used to determine if each element (or its options) should be checked (or selected).
  */
-NodeCollectionPrototype.val = getFirstSetEachElement('val', function(numArgs) {
-	return !numArgs;
-});
+NodeCollectionPrototype.val = function(value) {
+	//Get first
+	if (isUndefined(value)) {
+		return this[0].val();
+	}
+
+	//Set each
+	for (var i = 0; i &lt; this.length; i++) {
+		this[i].val(value);
+	}
+
+	return this;
+};
 
 /**
  * Wrap an HTML structure around each node in the collection.
@@ -4100,7 +4317,7 @@ NodeListPrototype.namedItem = NodeCollectionPrototype.namedItem = function(name)
 HTMLCollectionPrototype.clean =
 
 /* NodeLists/HTMLCollections always contain unique elements */
-NodeListPrototype.unique = HTMLCollectionPrototype.unique =
+NodeListPrototype.uniq = HTMLCollectionPrototype.uniq =
 
 /* All of the above functions are equivalent to calling NodeCollection#toNC() on the NodeList/HTMLCollection */
 NodeCollectionPrototype.toNC;
@@ -4149,6 +4366,95 @@ Number[prototype].toPaddedString = function(length, radix) {
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String|String - JavaScript | MDN}
  */
 
+/*
+ * Used in the string replacement function to camelize dashed parts matched by a regex.
+ * This named function is pre-defined so that an anonymous function does not need to be created
+ * each time the String#camelize() function is called.
+ */
+function camelize(match, p1) {
+	return p1 ? p1.toUpperCase() : '';
+}
+
+//Reuse the prototype extensions variable to hold an object of String extensions
+prototypeExtensions = {
+	/**
+	 * Converts a string separated by dashes into its camelCase equivalent.
+	 * 
+	 * Firebolt uses this function to translate CSS property names to their DOM style-object property names.
+	 * 
+	 * __ATTENTION:__ Gecko browsers require style-object property names to start with an upper-case letter
+	 * if the CSS name starts with a dash (i.e. `-mox-binding` would need to be converted to `MozBinding`).
+	 * Because of this, strings starting with a dash will be capitalized in Gecko browsers and left to start
+	 * with a lower-case letter in all other browsers.
+	 * 
+	 * @example
+	 * 'background-color'.camelize();    // -> 'backgroundColor'
+	 * '-moz-box-orient'.camelize();     // -> 'MozBoxOrient'
+	 * '-ms-perspective'.camelize();     // -> 'msPerspective'
+	 * '-webkit-user-select'.camelize(); // -> 'webkitUserSelect'
+	 */
+	camelize: function() {
+		return this.replace(rgxCamelizables, camelize);
+	},
+
+	/**
+	 * HTML-encodes the string by converting HTML special characters to their entity equivalents and returns the result.
+	 * 
+	 * @example
+	 * '&lt;img src="//somesite.com" />'.escapeHTML();  // -> '&amp;lt;img src="//somesite.com" /&amp;gt;'
+	 * 
+	 * @function String.prototype.escapeHTML
+	 * @returns {String} The HTML-escaped text.
+	 */
+	escapeHTML: function() {
+		return createElement('div').text(this).innerHTML;
+	},
+
+	/**
+	 * Returns the string split into an array of substrings (tokens) that were separated by white-space.
+	 *
+	 * @function String.prototype.tokenize
+	 * @returns {String[]} An array of tokens.
+	 * @example
+	 * var str = "The boy who lived.";
+	 * str.tokenize();  // returns ["The", "boy", "who", "lived."]
+	 */
+	tokenize: function() {
+		return this.match(rgxNonWhitespace) || [];
+	},
+
+	/**
+	 * HTML-decodes the string by converting entities of HTML special characters to their normal form and returns the result.
+	 * 
+	 * @example
+	 * '&amp;lt;img src="//somesite.com" /&amp;gt;'.unescapeHTML();  // -> '&lt;img src="//somesite.com" />'
+	 * 
+	 * @function String.prototype.unescapeHTML
+	 * @returns {String} The HTML-unescaped text.
+	 */
+	unescapeHTML: function() {
+		return createElement('div').html(this).textContent;
+	},
+
+	/**
+	 * Appends query string parameters to a URL.
+	 *
+	 * @function String.prototype.URLAppend
+	 * @param {String} params - Query string parameters.
+	 * @returns {String} A reference to the string.
+	 * @example
+	 * var url = "http://google.com";
+	 * url = url.URLAppend('lang=en');  // "http://google.com?lang=en"
+	 * url = url.URLAppend('foo=bar');  // "http://google.com?lang=en&amp;foo=bar"
+	 */
+	URLAppend: function(params) {
+		return this.concat(this.contains('?') ? '&amp;' : '?', params);
+	}
+};
+
+
+/* Add ES6 functions to String.prototype */
+
 if (!StringPrototype.contains) {
 	/**
 	 * Determines whether the passed in string is in the current string.
@@ -4162,11 +4468,9 @@ if (!StringPrototype.contains) {
 	 * alert( str.contains(" is ") );    // true
 	 * alert( str.contains("summer") );  // false
 	 */
-	defineProperty(StringPrototype, 'contains', {
-		value: function(searchString, position) {
-			return this.indexOf(searchString, position) >= 0;
-		}
-	});
+	prototypeExtensions.contains = function(searchString, position) {
+		return ('' + this).indexOf(searchString, position) >= 0;
+	};
 }
 
 if (!StringPrototype.endsWith) {
@@ -4183,12 +4487,11 @@ if (!StringPrototype.endsWith) {
 	 * alert( str.endsWith("am I") );      // false
 	 * alert( str.endsWith("am I", 8) );   // true
 	 */
-	defineProperty(StringPrototype, 'endsWith', {
-		value: function(searchString, position) {
-			position = (!isUndefined(position) &amp;&amp; position &lt; this.length ? position : this.length) - searchString.length;
-			return position >= 0 &amp;&amp; this.indexOf(searchString, position) === position;
-		}
-	});
+	prototypeExtensions.endsWith = function(searchString, position) {
+		var str = '' + this;
+		position = (position &lt; str.length ? position : str.length) - searchString.length;
+		return position >= 0 &amp;&amp; str.indexOf(searchString, position) === position;
+	};
 }
 
 if (!StringPrototype.repeat) {
@@ -4206,18 +4509,16 @@ if (!StringPrototype.repeat) {
 	 * "abc".repeat(3.5) // "abcabcabc" (count will be converted to integer)
 	 * "0".repeat(5)     // "00000"
 	 */
-	defineProperty(StringPrototype, 'repeat', {
-		value: function(count) {
-			count = parseInt(count || 0);
-			if (isNaN(count) || count &lt; 0) {
-				throw new RangeError('The repeat count must be positive and less than infinity.');
-			}
-			for (var str = '', i = 0; i &lt; count; i++) {
-				str += this;
-			}
-			return str;
+	prototypeExtensions.repeat = function(count) {
+		count = parseInt(count || 0);
+		if (isNaN(count) || count &lt; 0) {
+			throw new RangeError('The repeat count must be positive and less than infinity.');
 		}
-	});
+		for (var str = '', i = 0; i &lt; count; i++) {
+			str += this;
+		}
+		return str;
+	};
 }
 
 if (!StringPrototype.startsWith) {
@@ -4234,47 +4535,13 @@ if (!StringPrototype.startsWith) {
 	 * alert( str.endsWith("am I") );     // false
 	 * alert( str.endsWith("am I", 4) );  // true
 	 */
-	defineProperty(StringPrototype, 'startsWith', {
-		value: function(searchString, position) {
-			position = position || 0;
-			return this.lastIndexOf(searchString, position) === position;
-		}
-	});
+	prototypeExtensions.startsWith = function(searchString, position) {
+		return ('' + this).lastIndexOf(searchString, position = position || 0) === position;
+	};
 }
 
-defineProperties(StringPrototype, {
-	/**
-	 * Returns the string split into an array of substrings (tokens) that were separated by white-space.
-	 *
-	 * @function String.prototype.tokenize
-	 * @returns {String[]} An array of tokens.
-	 * @example
-	 * var str = "The boy who lived.";
-	 * str.tokenize();  // returns ["The", "boy", "who", "lived."]
-	 */
-	tokenize: {
-		value: function() {
-			return this.match(rgxNonWhitespace) || [];
-		}
-	},
-
-	/**
-	 * Appends query string parameters to a URL.
-	 *
-	 * @function String.prototype.URLAppend
-	 * @param {String} params - Query string parameters.
-	 * @returns {String} A reference to the string.
-	 * @example
-	 * var url = "http://google.com";
-	 * url = url.URLAppend('lang=en');  // "http://google.com?lang=en"
-	 * url = url.URLAppend('foo=bar');  // "http://google.com?lang=en&amp;foo=bar"
-	 */
-	URLAppend: {
-		value: function(params) {
-			return this.concat(this.contains('?') ? '&amp;' : '?', params);
-		}
-	}
-});
+//Define the prototype properties on String.prototype
+definePrototypeExtensionsOn(StringPrototype);
 
 //#endregion String
 
@@ -4282,8 +4549,6 @@ defineProperties(StringPrototype, {
 //#region ============ Browser Compatibility and Speed Boosters ==============
 
 var isOldIE = createElement('div').html('&lt;!--[if IE]>&lt;i>&lt;/i>&lt;![endif]-->').$TAG('i').length,
-	isIOS = navigator.platform.startsWith('iP'), // iPhone, iPad, iPod
-	usesWebkit = 'WebkitAppearance' in document.documentElement.style,
 	noMultiParamClassListFuncs = (function() {
 		var elem = createElement('div');
 		if (elem.classList) {
@@ -4384,7 +4649,7 @@ if (!document.children) {
 //#endregion Browser Compatibility and Speed Boosters
 
 })(self, document, Array, Object, decodeURIComponent, encodeURIComponent); //self === window
-</pre> </article> </section> </div> <div class="clearfix"></div> <footer> <span class="copyright"> Copyright © 2014 Nathan Woltman </span> <br/> <span class="jsdoc-message"> Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Fri Jun 20 2014 01:41:05 GMT-0700 (PDT) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>. </span> </footer> </div> <br clear="both"> </div> </div> <script src="scripts/sunlight.js"></script> <script src="scripts/sunlight.javascript.js"></script> <script src="scripts/sunlight-plugin.doclinks.js"></script> <script src="scripts/sunlight-plugin.linenumbers.js"></script> <script src="scripts/sunlight-plugin.menu.js"></script> <script src="scripts/jquery.min.js"></script> <script src="scripts/jquery.scrollTo.js"></script> <script src="scripts/jquery.localScroll.js"></script> <script src="scripts/bootstrap-dropdown.js"></script> <script src="scripts/toc.js"></script> <script>  Sunlight.highlightAll({lineNumbers: true,  showMenu: true, enableDoclinks: true}); </script> <script>
+</pre> </article> </section> </div> <div class="clearfix"></div> <footer> <span class="copyright"> Copyright © 2014 Nathan Woltman </span> <br/> <span class="jsdoc-message"> Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Thu Jun 26 2014 01:45:18 GMT-0700 (PDT) using the <a href="https://github.com/terryweiss/docstrap">DocStrap template</a>. </span> </footer> </div> <br clear="both"> </div> </div> <script src="scripts/sunlight.js"></script> <script src="scripts/sunlight.javascript.js"></script> <script src="scripts/sunlight-plugin.doclinks.js"></script> <script src="scripts/sunlight-plugin.linenumbers.js"></script> <script src="scripts/sunlight-plugin.menu.js"></script> <script src="scripts/jquery.min.js"></script> <script src="scripts/jquery.scrollTo.js"></script> <script src="scripts/jquery.localScroll.js"></script> <script src="scripts/bootstrap-dropdown.js"></script> <script src="scripts/toc.js"></script> <script>  Sunlight.highlightAll({lineNumbers: true,  showMenu: true, enableDoclinks: true}); </script> <script>
 		$( function () {
 			$( "#toc" ).toc( {
 			    anchorName  : function(i, heading, prefix) {
