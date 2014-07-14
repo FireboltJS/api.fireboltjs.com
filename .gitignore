@@ -1,0 +1,12 @@
+# Distribution (contains API website)
+/dist/
+
+# Source files for generating the documentation
+/src/
+
+# JSDoc
+/jsdoc/
+
+# Misc
+*.bak
+*.log

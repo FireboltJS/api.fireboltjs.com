@@ -1,0 +1,35 @@
+{
+  "tags": {
+    "allowUnknownTags": true
+  },
+  "source": {
+    "includePattern": ".+\\.js(doc)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "plugins": [ "jsdoc/plugins/markdown" ],
+  "markdown": {
+    "parser": "gfm",
+    "githubRepoName": "Firebolt",
+    "githubRepoOwner": "FireboltJS"
+  },
+  "templates": {
+    "cleverLinks": false,
+    "monospaceLinks": false,
+    "default": {
+      "outputSourceFiles": true
+    },
+    "systemName"      : "Firebolt",
+    "footer"          : "",
+    "copyright"       : "Copyright © 2014 Nathan Woltman",
+    "navType"         : "vertical",
+    "theme"           : "simplex",
+    "linenums"        : true,
+    "collapseSymbols" : true,
+    "inverseNav"      : true
+  },
+  "opts": {
+    "template": "templates/DocStrap",
+    "recurse": true,
+    "verbose": true
+  }
+}
