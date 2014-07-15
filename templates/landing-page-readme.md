@@ -1,7 +1,7 @@
 Firebolt
 ========
 
-> Slim, sleek, and speedy
+> JavaScript Empowered
 
 Firebolt is a fast and lightweight JavaScript library for modern browsers. Its core functionality is based on jQuery, so if you already know how to use jQuery, you know how to use Firebolt (with a few minor exceptions).
 
@@ -51,8 +51,3 @@ Furthermore, Firebolt's code base is alphabetized by class then function name, s
 * Android 3.0+
 * Blackberry 10+
 * IE Mobile 10+
-
-
-## API
-
-[http://api.fireboltjs.com](http://api.fireboltjs.com)
