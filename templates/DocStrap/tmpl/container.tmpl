@@ -18,11 +18,11 @@
 
 <header>
     <h2><?js if (doc.ancestors && doc.ancestors.length) { ?>
-        <span class="ancestors"><?js= doc.ancestors.join('') ?></span>
+      <span class="ancestors"><?js= doc.ancestors.join('') ?></span>
     <?js } ?>
     <?js= doc.name ?>
     <?js if (doc.variation) { ?>
-        <sup class="variation"><?js= doc.variation ?></sup>
+      <sup class="variation"><?js= doc.variation ?></sup>
     <?js } ?></h2>
     <?js if (doc.classdesc) { ?>
         <div class="class-description"><?js= doc.classdesc ?></div>
@@ -114,11 +114,19 @@
         var methods = self.find({kind: 'function', memberof: title === 'Global' ? {isUndefined: true} : doc.longname});
         if (methods && methods.length && methods.forEach) {
     ?>
-        <h3 class="subsection-title">Methods</h3>
-
-        <dl><?js methods.forEach(function(m) { ?>
+        <h3 class="subsection-title" id="methods-title">
+          Methods
+          <button class="btn btn-primary btn-sm" id="expand-all" onclick="toggleMethods(1)">Expand All</button>
+          <button class="btn btn-primary btn-sm" id="collapse-all" onclick="toggleMethods(0)">Collapse All</button>
+        </h3>
+        <dl id="all-methods"><?js methods.forEach(function(m) { ?>
             <?js= self.partial('method.tmpl', m) ?>
         <?js }); ?></dl>
+        <script>
+          function toggleMethods(expandOrCollapse) {
+            $(document.getElementById('all-methods').getElementsByClassName('member-' + (expandOrCollapse ? 'collapsed' : 'open'))).click();
+          }
+        </script>
     <?js } ?>
 
     <?js

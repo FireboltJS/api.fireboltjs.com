@@ -153,8 +153,15 @@
 				var $this = $(this),
 					children = $this.parent("dt").next("dd");
 				$this.children('i').toggleClass("icon-plus-sign icon-minus-sign");
-				children.slideToggle($this.hasClass('member-collapsed'));
-				$this.toggleClass("member-open member-collapsed");
+				if ($this.hasClass('member-collapsed')) {
+					$this.toggleClass("member-open member-collapsed");
+					children.slideDown();
+				}
+				else {
+					children.slideUp(function() {
+						$this.toggleClass("member-open member-collapsed");
+					});
+				}
 			});
 
 			if (location.hash) {
