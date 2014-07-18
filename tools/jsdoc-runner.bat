@@ -3,7 +3,7 @@
 SET OUTPUT_DIR=.\dist
 SET INPUT_DIR=.\src
 
-REM Working Copy, contents not be altered
+REM Working Copy, contents will not be altered
 SET ORIGINAL_SOURCE=..\Firebolt\src
 
 IF EXIST "%INPUT_DIR%" (
