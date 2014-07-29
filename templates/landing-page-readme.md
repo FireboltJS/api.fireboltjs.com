@@ -47,7 +47,7 @@ __Firebolt__
 2. The HTMLCollection is looped over to set a `click` handler on each element
 3. When an element is clicked, `.toggleClass()` is called directly on the element to toggle the specified classes
 
-It is quite obvious that the Firebolt code has less work to do in this example, so it will have better performance. Furthermore, the `.on()` method is used by Firebolt because jQuery's "convenience" event methods have been purposely left out of the libarary. This was done to remove ambiguous behaviour from the `.click()` function, since calling it without parameters (in both Firebolt and jQuery), clicks each element in the collection, which is a completely different use for the function and also makes more sense with the function name.
+It is quite obvious that the Firebolt code has less work to do in this example, so it will have better performance. Furthermore, the `.on()` method is used by Firebolt because jQuery's "convenience" event methods have been purposely left out of the libarary. This was done to remove ambiguous behaviour from functions like the `.click()` function, since calling it without parameters (in both Firebolt and jQuery), clicks each element in the collection, which is a completely different use for the function and also makes more sense with the function name.
 
 __Note:__ Since Firebolt is modelled after jQuery, `$('.btn.btn-default')` could have been used instead, in which case the selector string would need to be parsed by Firebolt to figure out that it should call `document.getElementsByClassName()`.
 
