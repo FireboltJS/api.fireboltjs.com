@@ -6,7 +6,7 @@ $files = glob("./src/*");
 
 foreach ($files as $file) {
 	$text = preg_replace_callback(
-		"/```(?:javascript)?(.*?)```/s",
+		"/```(?:javascript\b|js\b)?(.*?)```/s",
 		function ($matches) {
 			global $file;
 			return '<pre class="sunlight-highlight-javascript">'

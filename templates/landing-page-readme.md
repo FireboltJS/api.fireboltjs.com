@@ -21,7 +21,7 @@ Following in the footsteps of the [Prototype](http://prototypejs.org) framework,
 
 ---
 
-```javascript
+```js
 // jQuery
 $('.btn.btn-default').click(function() {
     $(this).toggleClass('btn-default btn-success');
