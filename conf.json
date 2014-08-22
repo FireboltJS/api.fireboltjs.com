@@ -10,7 +10,7 @@
   "markdown": {
     "parser": "gfm",
     "githubRepoName": "Firebolt",
-    "githubRepoOwner": "FireboltJS"
+    "githubRepoOwner": "woollybogger"
   },
   "templates": {
     "cleverLinks": false,

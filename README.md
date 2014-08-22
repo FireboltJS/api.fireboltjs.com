@@ -12,4 +12,4 @@ API Documentation for [Firebolt](http://fireboltjs.com)
 4. Run `gendocs.bat` to test that you can build the documentation (generated files will be placed in a folder called `dist`).
 5. Start contributing!
 
-Read the [contributing guidelines](https://github.com/FireboltJS/api.fireboltjs.com/blob/master/CONTRIBUTING.md) for more details.
+Read the [contributing guidelines](https://github.com/woollybogger/api.fireboltjs.com/blob/master/CONTRIBUTING.md) for more details.

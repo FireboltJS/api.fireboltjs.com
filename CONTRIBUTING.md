@@ -14,4 +14,4 @@ Contributing
 
 Simply make your changes and submit a pull request :smiley:
 
-If you plan on making any major changes, [open an issue](https://github.com/FireboltJS/api.fireboltjs.com/issues) or contact [me](https://github.com/woollybogger) directly to describe the changes you would like to make before making them.
+If you plan on making any major changes, [open an issue](https://github.com/woollybogger/api.fireboltjs.com/issues) or contact [me](https://github.com/woollybogger) directly to describe the changes you would like to make before making them.

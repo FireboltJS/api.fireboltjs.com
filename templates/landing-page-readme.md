@@ -53,7 +53,7 @@ __Note:__ Since Firebolt is modelled after jQuery, `$('.btn.btn-default')` could
 
 ---
 
-Furthermore, Firebolt's code base is alphabetized by class then function name, so it is fairly easy to find and remove any functions you don't need to make the library even smaller should you decide to use it, or on the other side of the spectrum, you can simply extract a few functions if you don't need the whole libary. All of this is just fine since Firebolt is open source software and is released under the friendly [MIT license](https://github.com/FireboltJS/Firebolt/blob/master/LICENSE.txt).
+Furthermore, Firebolt's code base is alphabetized by class then function name, so it is fairly easy to find and remove any functions you don't need to make the library even smaller should you decide to use it, or on the other side of the spectrum, you can simply extract a few functions if you don't need the whole libary. All of this is just fine since Firebolt is open source software and is released under the friendly [MIT license](https://github.com/woollybogger/Firebolt/blob/master/LICENSE.txt).
 
 
 ## Browser Support
