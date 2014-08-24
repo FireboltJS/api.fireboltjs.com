@@ -3,7 +3,7 @@ Firebolt
 
 > JavaScript Empowered
 
-Firebolt is a fast and lightweight JavaScript library for modern browsers. Its core functionality is based on jQuery, so if you already know how to use jQuery, you know how to use Firebolt (with a few minor exceptions).
+Firebolt is a fast and lightweight JavaScript library for modern browsers. Its core functionality is based on jQuery, so if you already know how to use jQuery, you sort of already know how to use Firebolt. There are a few subtle differences between Firebolt and jQuery, so moving between the two will take some getting used to, but learning Firebolt with no prior knowledge of jQuery is just as easy as learning jQuery, if not more so.
 
 ---
 
