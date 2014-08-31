@@ -3,13 +3,13 @@ Firebolt
 
 > JavaScript Empowered
 
-Firebolt is a fast and lightweight JavaScript library for modern browsers. Its core functionality is based on jQuery, so if you already know how to use jQuery, you sort of already know how to use Firebolt. There are a few subtle differences between Firebolt and jQuery, so moving between the two will take some getting used to, but learning Firebolt with no prior knowledge of jQuery is just as easy as learning jQuery, if not more so.
-
 ---
 
 __WARNING:__ This project is still in development. The API could change at any time.
 
 ---
+
+Firebolt is a fast and lightweight JavaScript library for modern browsers. Its core functionality is based on jQuery, so if you already know how to use jQuery, you sort of already know how to use Firebolt. There are a few subtle differences between Firebolt and jQuery, so moving between the two will take some getting used to, but learning Firebolt with no prior knowledge of jQuery is just as easy as learning jQuery, if not more so.
 
 Similar to [Zepto.js](http://zeptojs.com), Firebolt does not aim for 100% jQuery coverage. It stays lean by only targeting only modern browsers and specifically leaves out jQuery functions that were made obsolete by ES5 (i.e `jQuery.trim()`).
 
@@ -37,7 +37,7 @@ Even though the code is very similar for both Firebolt and jQuery, what happens 
 
 __jQuery__
 1. The CSS selector string is parsed by jQuery/Sizzle
-2. All elements in the document with the classes "btn" and "btn-default" are retrieved (possibly with `document.getElementsByClassname()`) and added to an array-like collection
+2. All elements in the document with the classes "btn" and "btn-default" are retrieved (possibly with `document.getElementsByClassName()`) and added to an array-like collection
 3. The collection is looped over to set a `click` handler on each element
 4. When an element is clicked, it is added to another array-like collection
 5. That collection is looped over to toggle the specifed classes of each element (which is just the one element)
