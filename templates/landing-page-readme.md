@@ -17,7 +17,7 @@ In addition to being very small, Firebolt also aims to be blazing fast. Many fun
 
 ### The Secret Sauce
 
-Following in the footsteps of the [Prototype](http://prototypejs.org) framework, Firebolt extends the prototype of native objects. This makes coding with Firebolt feel more natural because you can call functions directly on the objects themselves, which also allows you to write code in ways that provide better perfomance, and more clearly indicate what the code is doing. Here's an example of selecting elements and toggling a [Bootstrap](http://getbootstrap.com) class when they are clicked:
+Following in the footsteps of the [Prototype framework](http://prototypejs.org), Firebolt extends the prototype of native objects. This makes coding with Firebolt feel more natural because you can call functions directly on the objects themselves, which also allows you to write code in ways that provide better perfomance, and more clearly indicate what the code is doing. Here's an example of selecting elements and toggling a [Bootstrap](http://getbootstrap.com) class when they are clicked:
 
 ---
 
@@ -53,7 +53,7 @@ __Note:__ Since Firebolt is modelled after jQuery, `$('.btn.btn-default')` could
 
 ---
 
-Furthermore, Firebolt's code base is alphabetized by class then function name, so it is fairly easy to find and remove any functions you don't need to make the library even smaller should you decide to use it, or on the other side of the spectrum, you can simply extract a few functions if you don't need the whole libary. All of this is just fine since Firebolt is open source software and is released under the friendly [MIT license](https://github.com/woollybogger/Firebolt/blob/master/LICENSE.txt).
+Furthermore, Firebolt's code base is alphabetized by class then function name, so it is fairly easy to find and remove any functions you don't need to make the library even smaller should you decide to use it, or on the other end of the spectrum, you can simply extract a few functions if you don't need the whole libary. All of this is just fine since Firebolt is open source software and is released under the friendly [MIT license](https://github.com/woollybogger/Firebolt/blob/master/LICENSE.txt).
 
 
 ## Browser Support
