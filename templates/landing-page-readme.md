@@ -58,8 +58,8 @@ Furthermore, Firebolt's code base is alphabetized by class then function name, s
 
 ## Browser Support
 
-* Chrome 30+ (tested in 30+ but should support back to at least v21)
-* Firefox 24+ (tested in 24+ but should support back to v16)
+* Chrome 30+
+* Firefox 24+
 * Internet Explorer 9+
 * Safari 5.1+
 * Opera 12.1+
