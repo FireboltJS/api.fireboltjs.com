@@ -56,6 +56,40 @@ __Note:__ Since Firebolt is modelled after jQuery, `$('.btn.btn-default')` could
 Furthermore, Firebolt's code base is alphabetized by class then function name, so it is fairly easy to find and remove any functions you don't need to make the library even smaller should you decide to use it, or on the other end of the spectrum, you can simply extract a few functions if you don't need the whole libary. All of this is just fine since Firebolt is open source software and is released under the friendly [MIT license](https://github.com/woollybogger/Firebolt/blob/master/LICENSE.txt).
 
 
+## Download Firebolt
+
+<p>
+  <a class="btn btn-default" href="http://fireboltjs.com/firebolt.js" style="padding-right:15px">firebolt.js - development version</a>
+  <span style="display:inline-block">
+    <b>&rarr;</b>
+    <i style="position:relative; top:1px">fully documented with comments</i>
+  </span>
+</p>
+<p>
+  <a class="btn btn-default" href="http://fireboltjs.com/firebolt.min.js" style="padding-right:16px">firebolt.min.js - minified version</a>
+  <span style="display:inline-block">
+    <b>&rarr;</b>
+    <i style="position:relative; top:1px">~9.9 kB when gzipped</i>
+  </span>
+</p>
+<p style="font-size:14px; margin:10px">
+  <b>Note:</b> The library is currently in alpha, so it may have some bugs. Please <a href="https://github.com/woollybogger/Firebolt/issues">report</a> any bugs that you find.
+</p>
+
+#### Include Firebolt in a web page
+
+```html
+<!-- Development -->
+<script src="http://fireboltjs.com/firebolt.js"></script>
+
+<!-- Production -->
+<script src="http://fireboltjs.com/firebolt.min.js"></script>
+
+<!-- Production HTTPS -->
+<script src="https://s3.amazonaws.com/fireboltjs.com/firebolt.min.js"></script>
+```
+
+
 ## Browser Support
 
 * Chrome 30+

@@ -6,12 +6,12 @@ $files = glob("./src/*");
 
 foreach ($files as $file) {
 	$text = preg_replace_callback(
-		"/```(?:javascript\b|js\b)?(.*?)```/s",
+		"/```(?:(javascript|js|html|xml)\b)?(.*?)```/s",
 		function ($matches) {
 			global $file;
-			return '<pre class="sunlight-highlight-javascript">'
-					.(pathinfo($file)['extension'] == "md" ? htmlspecialchars($matches[1]) : $matches[1])
-					."</pre>";
+			$highlight = $matches[1][0] === 'j' ? 'javascript' : 'xml';
+			$content = pathinfo($file)['extension'] == 'md' ? htmlspecialchars($matches[2]) : $matches[2];
+			return '<pre class="sunlight-highlight-'.$highlight.'">'.$content.'</pre>';
 		},
 		file_get_contents($file)
 	);
