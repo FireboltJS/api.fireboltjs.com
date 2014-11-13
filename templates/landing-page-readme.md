@@ -76,17 +76,11 @@ Furthermore, Firebolt's code base is alphabetized by class then function name, s
   <b>Note:</b> The library is currently in alpha, so it may have some bugs. Please <a href="https://github.com/woollybogger/Firebolt/issues">report</a> any bugs that you find.
 </p>
 
-#### Include Firebolt in a web page
+### Firebolt CDN
+Just use the code below to include Firebolt directly in your webpage (thanks to Firebolt's CDN provider, [CloudFlare](https://www.cloudflare.com)).
 
 ```html
-<!-- Development -->
-<script src="http://fireboltjs.com/firebolt.js"></script>
-
-<!-- Production -->
-<script src="http://fireboltjs.com/firebolt.min.js"></script>
-
-<!-- Production HTTPS -->
-<script src="https://s3.amazonaws.com/fireboltjs.com/firebolt.min.js"></script>
+<script src="//fireboltjs.com/firebolt.min.js"></script>
 ```
 
 
