@@ -86,8 +86,8 @@ Just use the code below to include Firebolt directly in your webpage (thanks to 
 
 ## Browser Support
 
-* Chrome 30+
-* Firefox 24+
+* Chrome 26+
+* Firefox 16+
 * Internet Explorer 9+
 * Safari 5.1+
 * Opera 12.1+
