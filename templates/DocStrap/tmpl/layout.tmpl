@@ -3,13 +3,13 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="author" content="Nathan Woltman">
-  <meta name="description" content="Firebolt API documentation.">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="author" content="Nathan Woltman">
+	<meta name="description" content="Firebolt API documentation.">
 	<title><?js= this.navOptions.systemName ?> <?js= title ?> | Firebolt API</title>
 
-  <link rel="icon" href="//fireboltjs.com/favicon.ico?v=1">
+	<link rel="icon" href="//fireboltjs.com/favicon.ico?v=1">
 
 	<link type="text/css" rel="stylesheet" href="styles/sunlight.default.min.css">
 	<link type="text/css" rel="stylesheet" href="styles/site.simplex.min.css">
@@ -113,12 +113,12 @@
 			});
 
 			$( "#toc" ).toc( {
-			    anchorName  : function(i, heading, prefix) {
+				anchorName: function(i, heading, prefix) {
 					return $(heading).attr("id") || ( prefix + i );
 				},
-				selectors   : "h1,h2,h3,h4",
-				showAndHide : false,
-				scrollTo    : 60
+				selectors: "h1,h2,h3,h4",
+				showAndHide: false,
+				scrollTo: 60
 			} );
 			$( "#toc>ul" ).addClass( "nav nav-pills nav-stacked" );
 			$( "#main span[id^='toc']" ).addClass( "toc-shim" );
@@ -151,8 +151,7 @@
 					icon.addClass("icon-plus-sign");
 					$this.addClass("member-collapsed");
 					children.hide();
-				}
-				else {
+				} else {
 					icon.addClass("icon-minus-sign");
 					$this.addClass("member-open");
 				}
@@ -163,8 +162,7 @@
 				if ($this.hasClass('member-collapsed')) {
 					$this.toggleClass("member-open member-collapsed");
 					children.slideDown();
-				}
-				else {
+				} else {
 					children.slideUp(function() {
 						$this.toggleClass("member-open member-collapsed");
 					});
@@ -174,11 +172,8 @@
 			if (location.hash) {
 				$('[href="' + location.hash + '"]').click();
 			}
-			if ($('member-collapsed').length) {
-				$('.search-query').after('<button class="btn btn-link" onclick="$(\'member-collapsed\').click()">Expand All</button>');
-			}
 
-			//For all <a> tags that are not on this domain, set the target to '_blank'
+			// For all links that point to a different domain, set the target to '_blank'
 			$('a[href^="http"]').each(function() {
 				this.target = '_blank';
 			});
