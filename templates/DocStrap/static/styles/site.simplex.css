@@ -5448,11 +5448,11 @@ code {
   padding: 12px 4px !important;
 }
 .sunlight-container {
-	margin: -15px 0 25px !important;
+  margin: -15px 0 25px !important;
 }
 article .toc-shim{
-	position: relative;
-	z-index: -1;
+  position: relative;
+  z-index: -1;
 }
 .description h5 {
   font-size: 17px;
@@ -5460,13 +5460,13 @@ article .toc-shim{
   margin-top: 12px;
 }
 .description pre {
-	margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 span.optional:before {
-	content: '[';
+  content: '[';
 }
 span.optional:after {
-	content: ']';
+  content: ']';
 }
 #methods-title {
   position: relative;
@@ -5481,4 +5481,25 @@ span.optional:after {
 }
 #collapse-all {
   right: 0;
+}
+#ajax-settings dt > span:not(:empty)::before {
+  background-color: #f7f7f7;
+  content: '(default: ';
+}
+#ajax-settings dt > span {
+  background-color: #eee;
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: normal;
+}
+#ajax-settings dt > span:not(:empty)::after {
+  background-color: #f7f7f7;
+  content: ')';
+}
+#ajax-settings dt > span > code {
+  background-color: transparent;
+  padding: 2px;
+}
+#ajax-settings hr {
+  margin: 10px 0;
 }
