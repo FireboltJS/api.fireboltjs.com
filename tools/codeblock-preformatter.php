@@ -6,7 +6,7 @@ $files = glob("./src/*");
 
 foreach ($files as $file) {
 	$text = preg_replace_callback(
-		"/```(?:(javascript|js|html|xml)\b)?(.*?)```/s",
+		"/```(?:(javascript|js|html|xml))?[\s*]+(.*?)\s+```/s",
 		function ($matches) {
 			global $file;
 			$highlight = $matches[1][0] === 'j' ? 'javascript' : 'xml';
