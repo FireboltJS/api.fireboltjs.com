@@ -2,7 +2,7 @@
 
 echo "\nPreformatting ``` code blocks...\n";
 
-$files = glob("./src/*");
+$files = glob("./src/*.*");
 
 foreach ($files as $file) {
 	$text = preg_replace_callback(
